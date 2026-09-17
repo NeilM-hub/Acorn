@@ -1,0 +1,1 @@
+export const app=()=>document.querySelector('.acorn-hc__app'); export function progress(current,total){return `<p>Question ${current} of ${total}</p><progress value="${current}" max="${total}">${current} of ${total}</progress>`;}

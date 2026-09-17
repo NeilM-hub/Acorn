@@ -1,0 +1,2 @@
+<?php
+declare(strict_types=1);use PHPUnit\Framework\TestCase;use Acorn\SafetyHealthcheck\Assessment\{AssessmentService,AssessmentRepository};final class AssessmentLifecycleTest extends TestCase{public function test_raw_token_not_stored():void{$x=(new AssessmentService)->start();global $wpdb;self::assertSame(0,(int)$wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->prefix}acorn_hc_assessments WHERE assessment_token_hash=%s",$x['token'])));self::assertNotNull((new AssessmentRepository)->findByToken($x['token']));}}

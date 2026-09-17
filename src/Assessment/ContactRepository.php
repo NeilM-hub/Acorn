@@ -1,0 +1,2 @@
+<?php
+declare(strict_types=1);namespace Acorn\SafetyHealthcheck\Assessment;use Acorn\SafetyHealthcheck\Database\Schema;final class ContactRepository{public function create(array $p):int{global $wpdb;$wpdb->insert(Schema::table('contacts'),$p);return(int)$wpdb->insert_id;}public function find(int $id):array{global $wpdb;return(array)$wpdb->get_row($wpdb->prepare('SELECT * FROM '.Schema::table('contacts').' WHERE id=%d',$id),ARRAY_A);}}

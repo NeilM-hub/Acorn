@@ -1,0 +1,15 @@
+{
+  "name": "acorn-safety-healthcheck",
+  "private": true,
+  "scripts": {
+    "wp:start": "wp-env start",
+    "wp:stop": "wp-env stop",
+    "test:e2e": "playwright test",
+    "test:a11y": "playwright test tests/e2e/accessibility.spec.ts"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.55.0",
+    "@wordpress/env": "^10.25.0"
+  }
+}

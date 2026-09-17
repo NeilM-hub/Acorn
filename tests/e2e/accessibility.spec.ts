@@ -1,0 +1,1 @@
+import{test,expect}from'@playwright/test';import AxeBuilder from'@axe-core/playwright';test('landing has no detectable accessibility violations',async({page})=>{await page.goto('/health-and-safety-healthcheck/');const results=await new AxeBuilder({page}).analyze();expect(results.violations).toEqual([]);});

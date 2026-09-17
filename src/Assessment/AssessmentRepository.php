@@ -1,0 +1,3 @@
+<?php
+declare(strict_types=1);namespace Acorn\SafetyHealthcheck\Assessment;use Acorn\SafetyHealthcheck\Database\Schema;
+final class AssessmentRepository{public static function token():string{return rtrim(strtr(base64_encode(random_bytes(32)),'+/','-_'),'=');}public function findByToken(string $raw):?array{global $wpdb;$r=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.Schema::table('assessments').' WHERE assessment_token_hash=%s',hash('sha256',$raw)),ARRAY_A);return$r?:null;}public function find(int $id):?array{global $wpdb;$r=$wpdb->get_row($wpdb->prepare('SELECT * FROM '.Schema::table('assessments').' WHERE id=%d',$id),ARRAY_A);return$r?:null;}}

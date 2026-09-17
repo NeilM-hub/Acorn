@@ -1,0 +1,2 @@
+<?php
+declare(strict_types=1);use PHPUnit\Framework\TestCase;use Acorn\SafetyHealthcheck\Domain\ResultsEngine;final class ResultsEngineTest extends TestCase{public function test_rollup():void{$r=(new ResultsEngine)->rollUp([['module_key'=>'fire','finding_status'=>'review'],['module_key'=>'fire','finding_status'=>'priority'],['module_key'=>'people','finding_status'=>'addressed']]);self::assertSame('priority',$r['section_statuses']['fire']);}}

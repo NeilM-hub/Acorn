@@ -1,0 +1,1 @@
+export async function request(path, options = {}) { const response = await fetch(window.acornHealthcheck.rest + path, {headers:{'Content-Type':'application/json'}, ...options}); const body=await response.json(); if(!response.ok) throw new Error(body.message||'Unable to save'); return body; }

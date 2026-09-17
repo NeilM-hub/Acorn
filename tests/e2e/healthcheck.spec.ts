@@ -1,0 +1,1 @@
+import {test,expect} from '@playwright/test';test('landing is useful before contact capture',async({page})=>{await page.goto('/health-and-safety-healthcheck/');await expect(page.getByRole('heading',{name:'Free Health & Safety Healthcheck'})).toBeVisible();await expect(page.getByLabel('Work email')).not.toBeVisible();});

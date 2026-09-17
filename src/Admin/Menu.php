@@ -1,0 +1,2 @@
+<?php
+declare(strict_types=1);namespace Acorn\SafetyHealthcheck\Admin;final class Menu{public function register():void{add_menu_page('Healthcheck','Healthcheck','manage_acorn_healthcheck','acorn-healthcheck',[new DashboardPage,'render'],'dashicons-shield');add_submenu_page('acorn-healthcheck','Assessments','Assessments','manage_acorn_healthcheck','acorn-healthcheck-assessments',[new AssessmentsPage,'render']);}}

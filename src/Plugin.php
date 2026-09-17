@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Acorn\SafetyHealthcheck;
+
+final class Plugin
+{
+    public function boot(): void
+    {
+        add_action('admin_menu', [new \Acorn\SafetyHealthcheck\Admin\Menu(), 'register']);
+        add_shortcode('acorn_safety_healthcheck', [$this, 'shortcode']);
+        add_action('wp_enqueue_scripts', [$this, 'assets']);
+        add_action('rest_api_init', [new \Acorn\SafetyHealthcheck\Rest\AssessmentController(), 'register']);
+        add_action('rest_api_init', [new \Acorn\SafetyHealthcheck\Rest\CompletionController(), 'register']);
+        (new \Acorn\SafetyHealthcheck\Reports\ReportController())->register();
+        add_action('acorn_hc_daily_cleanup', [new \Acorn\SafetyHealthcheck\Privacy\Retention(), 'cleanup']);
+        (new \Acorn\SafetyHealthcheck\Privacy\ExportEraser())->register();
+        do_action('acorn_hc_booted', $this);
+    }
+    public function shortcode(): string { ob_start(); require ACORN_HC_DIR . 'templates/shortcode-shell.php'; return (string) ob_get_clean(); }
+    public function assets(): void { global $post; if (!$post || !has_shortcode((string) $post->post_content, 'acorn_safety_healthcheck')) return; wp_enqueue_style('acorn-healthcheck', plugins_url('assets/css/healthcheck.css', ACORN_HC_FILE), [], ACORN_HC_VERSION); wp_enqueue_script('acorn-healthcheck', plugins_url('assets/js/healthcheck.js', ACORN_HC_FILE), [], ACORN_HC_VERSION, true); wp_script_add_data('acorn-healthcheck', 'type', 'module'); }
+}

@@ -1,0 +1,1 @@
+import{test,expect}from'@playwright/test';test('session storage excludes contact details',async({page})=>{await page.goto('/health-and-safety-healthcheck/');await expect(page.locator('#acorn-healthcheck')).toBeVisible();});

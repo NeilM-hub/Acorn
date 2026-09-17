@@ -1,0 +1,2 @@
+<?php
+declare(strict_types=1);namespace Acorn\SafetyHealthcheck\Notifications;use Acorn\SafetyHealthcheck\Assessment\AssessmentRepository;final class InternalMailer{public function send(int$id):bool{$a=(new AssessmentRepository)->find($id);$to=get_option('acorn_hc_settings')['internal_recipient']??get_option('admin_email');return wp_mail($to,'Healthcheck Lead | '.$a['sector'].' | '.$a['priority_count'].' Priority Actions','Audit request and assessment details are available in WordPress admin.');}}

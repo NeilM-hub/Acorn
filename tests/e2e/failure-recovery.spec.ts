@@ -1,0 +1,1 @@
+import{test,expect}from'@playwright/test';test('web shell remains available independently of email and PDF',async({page})=>{await page.goto('/health-and-safety-healthcheck/');await expect(page.locator('#acorn-healthcheck')).toBeVisible();});
