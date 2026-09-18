@@ -96,8 +96,8 @@ report_url="$(jq -r '.report_url // empty' <<<"$completed")"
 [[ -n "$report_url" ]] || { echo "Completion did not return a report URL." >&2; exit 1; }
 
 report="$(curl -fsS "$report_url")"
-grep -q 'Health &amp; Safety Healthcheck Report' <<<"$report"
-grep -q 'Resend report email' <<<"$report"
+grep -q 'Your Health &amp; Safety Healthcheck' <<<"$report"
+grep -q 'Resend email' <<<"$report"
 
 "$wp_env" run cli bash -lc '
   log=/var/www/html/wp-content/debug.log
