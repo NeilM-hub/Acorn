@@ -17,6 +17,12 @@ return [
         'review_count' => 0,
         'addressed_count' => 0,
     ],
+    'executive' => [
+        'summary_text' => 'No obvious gaps were identified in the areas covered by this Healthcheck.',
+        'priority_label' => 'Priority actions',
+        'review_label' => 'Reviews recommended',
+        'addressed_label' => 'Areas looking good',
+    ],
     'pillars' => [],
     'sections' => [
         'addressed' => ['label' => 'What appears to be working'],
@@ -30,7 +36,8 @@ return [
     'disclaimer' => 'This is an indicative self-assessment, not a formal audit or confirmation of compliance.',
     'privacy_policy_url' => 'https://example.test/privacy/',
     'support' => [
-        'heading' => 'Need help with any of the actions identified?',
+        'heading' => 'Want help turning this into an action plan?',
+        'body' => 'Acorn Safety Services can review the areas highlighted in your Healthcheck and help you decide what needs attention first.',
         'cta_label' => 'Request a free Health & Safety Compliance Audit',
         'cta_url' => 'https://example.test/health-and-safety-compliance-audit/',
     ],

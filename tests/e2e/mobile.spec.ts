@@ -22,6 +22,6 @@ test('mobile visitor can complete the Healthcheck and reach the report', async (
   await app.getByLabel('Work email').fill('mobile@example.test');
   await app.getByRole('button', {name: 'View my full report'}).click();
 
-  await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: 'Health & Safety Healthcheck Report'})).toBeVisible();
+  await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: 'Your Health & Safety Healthcheck'})).toBeVisible();
   await expect(page.locator('body')).toHaveCSS('overflow-x', /^(visible|auto|clip)$/);
 });
