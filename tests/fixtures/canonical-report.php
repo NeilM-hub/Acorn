@@ -10,6 +10,7 @@ return [
         'content_version' => '1.0',
         'areas_assessed' => 0,
     ],
+    'branding' => ['logo_url' => '', 'logo_data' => '', 'phone' => '01604 930380', 'website' => 'https://example.test/', 'pdf_footer' => 'Acorn Safety Services | Health & Safety Healthcheck'],
     'summary' => [
         'overall_status' => 'no_obvious_gaps',
         'priority_count' => 0,
@@ -27,6 +28,7 @@ return [
     'priority' => [],
     'action_summary' => [],
     'disclaimer' => 'This is an indicative self-assessment, not a formal audit or confirmation of compliance.',
+    'privacy_policy_url' => 'https://example.test/privacy/',
     'support' => [
         'heading' => 'Need help with any of the actions identified?',
         'cta_label' => 'Request a free Health & Safety Compliance Audit',

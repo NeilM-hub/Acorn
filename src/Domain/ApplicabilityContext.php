@@ -1,3 +1,40 @@
 <?php
-declare(strict_types=1);namespace Acorn\SafetyHealthcheck\Domain;use InvalidArgumentException;
-final readonly class ApplicabilityContext{public function __construct(public array $profile){}public static function fromProfile(array $p):self{$defs=require dirname(__DIR__,2).'/config/profile-fields.php';foreach($defs as $k=>$allowed){if(!array_key_exists($k,$p))throw new InvalidArgumentException("Missing profile field: $k");$values=in_array($k,['workplace_types','risk_flags'],true)?$p[$k]:[$p[$k]];if(!is_array($values)||array_diff($values,$allowed))throw new InvalidArgumentException("Invalid profile field: $k");}return new self($p);}public function hasRiskFlag(string $f):bool{return in_array($f,$this->profile['risk_flags'],true);}public function hasEmployees():bool{return $this->profile['employee_band']!=='none';}public function hasFireResponsibility():bool{return $this->profile['premises_responsibility']!=='no'&&$this->nonHomeWorkplace();}public function hasWaterResponsibility():bool{return $this->profile['water_system_responsibility']!=='no';}public function hasAsbestosResponsibility():bool{return $this->profile['maintenance_repair_responsibility']!=='no'&&in_array($this->profile['building_pre_2000'],['yes','not_sure'],true);}public function nonHomeWorkplace():bool{return array_diff($this->profile['workplace_types'],['home_working'])!==[];}}
+
+declare(strict_types=1);
+
+namespace Acorn\SafetyHealthcheck\Domain;
+
+use InvalidArgumentException;
+
+final class ApplicabilityContext
+{
+    public readonly array $profile;
+
+    public function __construct(array $profile)
+    {
+        $this->profile = $profile;
+    }
+
+    public static function fromProfile(array $profile): self
+    {
+        $definitions = require dirname(__DIR__, 2) . '/config/profile-fields.php';
+        foreach ($definitions as $key => $allowed) {
+            if (!array_key_exists($key, $profile)) {
+                throw new InvalidArgumentException("Missing profile field: $key");
+            }
+            $values = in_array($key, ['workplace_types', 'risk_flags'], true) ? $profile[$key] : [$profile[$key]];
+            if (!is_array($values) || array_diff($values, $allowed)) {
+                throw new InvalidArgumentException("Invalid profile field: $key");
+            }
+        }
+        if ($profile['workplace_types'] === []) {
+            throw new InvalidArgumentException('Select at least one workplace type.');
+        }
+
+        return new self($profile);
+    }
+
+    public function hasRiskFlag(string $flag): bool { return in_array($flag, $this->profile['risk_flags'], true); }
+    public function hasEmployees(): bool { return $this->profile['employee_band'] !== 'none'; }
+    public function nonHomeWorkplace(): bool { return array_diff($this->profile['workplace_types'], ['home_working']) !== []; }
+}

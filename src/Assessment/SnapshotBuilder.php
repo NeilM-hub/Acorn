@@ -53,7 +53,7 @@ final class SnapshotBuilder
                     'good_looks_text' => $recommendation['good_looks_text'],
                     'source' => json_decode($recommendation['source_json'], true, 512, JSON_THROW_ON_ERROR),
                 ] : null,
-                'source' => json_decode($question['source_json'], true, 512, JSON_THROW_ON_ERROR),
+                'source' => $this->questionSource($question['source_json'], (string) $assessment['jurisdiction']),
             ];
         }
 
@@ -74,5 +74,13 @@ final class SnapshotBuilder
     private function humanSubject(string $question): string
     {
         return rtrim(preg_replace('/^(Has|Have|Are|Is|Do|Does)\s+(you\s+|the organisation\s+)?/i', '', $question) ?: $question, '?');
+    }
+
+    private function questionSource(string $json, string $jurisdiction): array
+    {
+        $sources = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        if (isset($sources['jurisdictions'][$jurisdiction])) return $sources['jurisdictions'][$jurisdiction];
+        if (isset($sources['default'])) return $sources['default'];
+        return $sources;
     }
 }

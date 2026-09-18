@@ -12,6 +12,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  php81:
+    name: PHP 8.1 compatibility
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          coverage: none
+          tools: composer:v2
+      - run: composer install --no-interaction --prefer-dist --no-progress
+      - run: find . -path './vendor' -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l
+      - run: composer test:unit
+
   verify:
     name: PHP, WordPress, browser, and release verification
     runs-on: ubuntu-latest
@@ -73,6 +87,19 @@ jobs:
           test -s dist/acorn-safety-healthcheck-1.0.0.zip
           unzip -t dist/acorn-safety-healthcheck-1.0.0.zip
           unzip -Z1 dist/acorn-safety-healthcheck-1.0.0.zip | grep -q '^acorn-safety-healthcheck/'
+          unzip -p dist/acorn-safety-healthcheck-1.0.0.zip acorn-safety-healthcheck/acorn-safety-healthcheck.php | grep -q 'Version: 1.0.0'
+          unzip -Z1 dist/acorn-safety-healthcheck-1.0.0.zip | grep -q '^acorn-safety-healthcheck/vendor/autoload.php$'
+          ! unzip -Z1 dist/acorn-safety-healthcheck-1.0.0.zip | grep -E '/(tests|docs|node_modules|\.github)/|phpunit\.xml|playwright\.config|package(-lock)?\.json|\.wp-env'
+
+      - name: Upload browser diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-diagnostics
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
 
       - name: Stop WordPress test environment
         if: ${{ always() && env.WP_ENV_STARTED == 'true' }}

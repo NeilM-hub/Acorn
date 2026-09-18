@@ -46,19 +46,18 @@ final class CompletionService
             'completed_at' => current_time('mysql'),
         ], ['id' => $assessment['id']]);
         $reportUrl = home_url('/healthcheck/report/' . rawurlencode($rawReportToken) . '/');
-        $errors = []; $attachment = null;
+        $emailErrors = []; $attachment = null;
         try {
             $attachment = (new PdfGenerator())->toTempFile((new ReportDataBuilder())->build((int) $assessment['id']));
             $wpdb->update(Schema::table('assessments'), ['pdf_status' => 'generated', 'pdf_last_error' => null], ['id' => $assessment['id']]);
         } catch (Throwable $error) {
-            $errors['pdf'] = $error->getMessage();
             $wpdb->update(Schema::table('assessments'), ['pdf_status' => 'failed', 'pdf_last_error' => $error->getMessage()], ['id' => $assessment['id']]);
         }
-        try { if (!(new CustomerMailer())->send((int) $assessment['id'], $reportUrl, $attachment)) $errors['customer'] = 'wp_mail returned false'; } catch (Throwable $error) { $errors['customer'] = $error->getMessage(); }
-        try { if (!(new InternalMailer())->send((int) $assessment['id'])) $errors['internal'] = 'wp_mail returned false'; } catch (Throwable $error) { $errors['internal'] = $error->getMessage(); }
+        try { if (!(new CustomerMailer())->send((int) $assessment['id'], $reportUrl, $attachment)) $emailErrors['customer'] = 'wp_mail returned false'; } catch (Throwable $error) { $emailErrors['customer'] = $error->getMessage(); }
+        try { if (!(new InternalMailer())->send((int) $assessment['id'])) $emailErrors['internal'] = 'wp_mail returned false'; } catch (Throwable $error) { $emailErrors['internal'] = $error->getMessage(); }
         if ($attachment && is_file($attachment)) unlink($attachment);
-        $emailStatus = !$errors ? 'sent' : ((isset($errors['customer']) && isset($errors['internal'])) ? 'failed' : 'partial');
-        $wpdb->update(Schema::table('assessments'), ['email_status' => $emailStatus, 'email_last_error' => $errors ? wp_json_encode($errors) : null], ['id' => $assessment['id']]);
+        $emailStatus = !$emailErrors ? 'sent' : ((isset($emailErrors['customer']) && isset($emailErrors['internal'])) ? 'failed' : 'partial');
+        $wpdb->update(Schema::table('assessments'), ['email_status' => $emailStatus, 'email_last_error' => $emailErrors ? wp_json_encode($emailErrors) : null], ['id' => $assessment['id']]);
         do_action('acorn_healthcheck_completed', (int) $assessment['id']);
         return ['report_token' => $rawReportToken, 'report_url' => $reportUrl, 'assessment_id' => (int) $assessment['id']];
     }

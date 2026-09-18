@@ -41,4 +41,18 @@ final class SourceMetadata
         foreach ($map as $prefix => $source) if (str_starts_with($key, $prefix)) return self::SOURCES[$source];
         return self::SOURCES['risk'];
     }
+
+    public static function versionedQuestionSources(string $key): array
+    {
+        $jurisdictions = [];
+        if (str_starts_with($key, 'F')) {
+            foreach (['england', 'wales', 'scotland', 'northern_ireland'] as $jurisdiction) {
+                $jurisdictions[$jurisdiction] = self::forQuestion($key, $jurisdiction);
+            }
+        } elseif (str_starts_with($key, 'L') || str_starts_with($key, 'AS')) {
+            $jurisdictions['northern_ireland'] = self::forQuestion($key, 'northern_ireland');
+        }
+
+        return ['default' => self::forQuestion($key), 'jurisdictions' => $jurisdictions];
+    }
 }

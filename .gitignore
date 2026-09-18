@@ -2,3 +2,7 @@
 /node_modules/
 .phpunit.cache/
 /dist/
+
+.phpunit.result.cache
+/test-results/
+/playwright-report/

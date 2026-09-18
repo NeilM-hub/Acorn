@@ -59,4 +59,25 @@ final class RestAssessmentTest extends IntegrationTestCase
 
         self::assertContains($response->get_status(), [400, 409]);
     }
+
+    public function test_completion_response_hides_internal_id_and_secure_data_route_returns_report(): void
+    {
+        add_filter('pre_wp_mail', '__return_true');
+        [, $token] = $this->assessed();
+        $request = new WP_REST_Request('POST', "/acorn-healthcheck/v1/assessments/$token/complete");
+        $request->set_body_params([
+            'first_name'=>'Ada','last_name'=>'Lovelace','company'=>'REST Ltd',
+            'email'=>'rest@example.test','audit_requested'=>false,'marketing_consent'=>false,
+        ]);
+        $response = $this->server->dispatch($request);
+        self::assertSame(200, $response->get_status());
+        $public = $response->get_data();
+        self::assertSame(['report_token','report_url'], array_keys($public));
+        self::assertArrayNotHasKey('assessment_id', $public);
+
+        $data = $this->server->dispatch(new WP_REST_Request('GET', '/acorn-healthcheck/v1/reports/' . $public['report_token'] . '/data'));
+        self::assertSame(200, $data->get_status());
+        self::assertArrayHasKey('summary', $data->get_data());
+        self::assertArrayNotHasKey('service_tags', $data->get_data());
+    }
 }

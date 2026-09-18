@@ -4,14 +4,14 @@ declare(strict_types=1);
 namespace Acorn\SafetyHealthcheck\Domain;
 
 /** Public, deliberately allow-listed wizard state. */
-final readonly class AssessmentState implements \JsonSerializable
+final class AssessmentState implements \JsonSerializable
 {
     public function __construct(
-        public string $status,
-        public array $profile,
-        public array $questions,
-        public array $answers,
-        public ?array $headline = null,
+        public readonly string $status,
+        public readonly array $profile,
+        public readonly array $questions,
+        public readonly array $answers,
+        public readonly ?array $headline = null,
     ) {}
 
     public function jsonSerialize(): array
