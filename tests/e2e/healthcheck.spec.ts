@@ -25,7 +25,7 @@ test('visitor completes profile, relevant questions, headline gate and contact c
   await app.getByRole('button', {name: 'View my full report'}).click();
 
   await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: 'Your Health & Safety Healthcheck'})).toBeVisible();
-  await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: 'What you're already doing well'})).toBeVisible();
+  await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: "What you're already doing well"})).toBeVisible();
 });
 
 test('plugin assets are not loaded on unrelated pages', async ({page}) => {
