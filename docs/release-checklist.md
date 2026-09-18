@@ -2,7 +2,7 @@
 
 This audit maps every approved acceptance criterion. Automated verification does **not** replace the remaining Acorn technical, privacy, branding, deliverability, usability, and client-value launch checks below.
 
-Engineering verification reference: GitHub Actions **V1 verification run #38** on commit `f3ba7147fdb311204d1c6f0a6d6bce42ed7ee64f` completed successfully, including PHP 8.1, unit/integration, browser, accessibility, production ZIP verification, and a clean non-source-mounted ZIP smoke test.
+Engineering verification reference: GitHub Actions **V1 verification run #42** on commit `e97a9ff5a57037ca8d35e73b1d7f27b823b5c714` completed successfully, including PHP 8.1, 16 unit tests / 38 assertions, 43 WordPress integration tests / 182 assertions, 11 browser tests, accessibility verification, production dependency audit, production ZIP verification, and a clean non-source-mounted ZIP smoke test.
 
 | # | Acceptance criterion | Implementation | Automated evidence | Manual launch check | Status |
 |---|---|---|---|---|---|
@@ -46,7 +46,7 @@ Engineering verification reference: GitHub Actions **V1 verification run #38** o
 
 - [x] Committed verified `composer.lock` and `package-lock.json`; CI uses `npm ci`.
 - [x] Full draft question/recommendation editor and review/publish controls implemented and integration-tested.
-- [x] Automated customer/internal/PDF failure-state and resend-attachment assertions added.
+- [x] Automated customer/internal/PDF failure-state and resend-attachment assertions added, including rollback protection so a failed admin resend does not invalidate the customer’s existing secure report link.
 - [x] Customer-facing report resend control implemented and browser-tested.
 - [x] Mobile browser completion journey added.
 - [x] Clean, non-source-mounted WordPress install/activation/completion/report smoke test added for the production ZIP.
