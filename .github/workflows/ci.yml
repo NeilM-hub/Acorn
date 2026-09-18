@@ -49,7 +49,9 @@ jobs:
         run: npm install
 
       - name: Start WordPress test environment
-        run: npm run wp:start
+        run: |
+          npm run wp:start
+          echo "WP_ENV_STARTED=true" >> "$GITHUB_ENV"
 
       - name: Run WordPress integration tests
         run: composer test:integration
@@ -73,5 +75,5 @@ jobs:
           unzip -Z1 dist/acorn-safety-healthcheck-1.0.0.zip | grep -q '^acorn-safety-healthcheck/'
 
       - name: Stop WordPress test environment
-        if: always()
+        if: ${{ always() && env.WP_ENV_STARTED == 'true' }}
         run: npm run wp:stop
