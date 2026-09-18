@@ -23,8 +23,8 @@ test('visitor completes profile, relevant questions, headline gate and contact c
   await app.getByLabel('Work email').fill('ada@example.test');
   await app.getByRole('button', {name: 'View my full report'}).click();
 
-  await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: 'Health & Safety Healthcheck Report'})).toBeVisible();
-  await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: 'What appears to be working'})).toBeVisible();
+  await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: 'Your Health & Safety Healthcheck'})).toBeVisible();
+  await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: 'What you're already doing well'})).toBeVisible();
 });
 
 test('plugin assets are not loaded on unrelated pages', async ({page}) => {
@@ -58,6 +58,7 @@ test('resume landing gives Start again a subdued secondary treatment', async ({p
   const app = healthcheck(page);
 
   await app.getByRole('button', {name: 'Start my Healthcheck'}).click();
+  await expect(app.getByRole('heading', {name: 'Your organisation'})).toBeVisible();
   await page.reload();
 
   const restart = app.getByRole('button', {name: 'Start again'});
