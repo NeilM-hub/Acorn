@@ -159,7 +159,6 @@
 .acorn-hc__answer input {
   position: absolute;
   opacity: 0;
-  pointer-events: none;
 }
 
 .acorn-hc__answer span {
