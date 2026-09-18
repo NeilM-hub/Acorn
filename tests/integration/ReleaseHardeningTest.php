@@ -3,8 +3,11 @@
 declare(strict_types=1);
 
 use Acorn\SafetyHealthcheck\Assessment\{AssessmentRepository, CompletionService};
-use Acorn\SafetyHealthcheck\Content\{ContentPublisher, ContentVersionRepository};
+use Acorn\SafetyHealthcheck\Activation;
+use Acorn\SafetyHealthcheck\Admin\ContentPage;
+use Acorn\SafetyHealthcheck\Content\{ContentPublisher, ContentVersionRepository, QuestionRepository};
 use Acorn\SafetyHealthcheck\Database\Schema;
+use Acorn\SafetyHealthcheck\Reports\ReportDataBuilder;
 
 final class ReleaseHardeningTest extends IntegrationTestCase
 {
@@ -60,6 +63,33 @@ final class ReleaseHardeningTest extends IntegrationTestCase
         self::assertArrayNotHasKey('internal', $errors);
     }
 
+    public function test_internal_mail_failure_is_recorded_without_marking_customer_mail_failed(): void
+    {
+        $calls = 0;
+        add_filter('pre_wp_mail', static function ($return, array $atts) use (&$calls) {
+            $calls++;
+            return $calls === 2 ? false : true;
+        }, 10, 2);
+
+        [$service, $token] = $this->assessed();
+        $result = (new CompletionService())->complete($token, [
+            'first_name' => 'Ada',
+            'last_name' => 'Lovelace',
+            'company' => 'Internal Mail Recovery Ltd',
+            'email' => 'internal-failure@example.test',
+            'audit_requested' => false,
+            'marketing_consent' => false,
+        ]);
+
+        remove_all_filters('pre_wp_mail');
+
+        $assessment = (new AssessmentRepository())->find($result['assessment_id']);
+        $errors = json_decode((string) $assessment['email_last_error'], true);
+        self::assertSame('partial', $assessment['email_status']);
+        self::assertArrayNotHasKey('customer', $errors);
+        self::assertArrayHasKey('internal', $errors);
+    }
+
     public function test_draft_question_editor_persists_full_question_controls(): void
     {
         global $wpdb;
@@ -101,6 +131,76 @@ final class ReleaseHardeningTest extends IntegrationTestCase
         $source = json_decode($question['source_json'], true);
         self::assertSame('Default source', $source['default']['title']);
         self::assertSame('Scotland source', $source['jurisdictions']['scotland']['title']);
+    }
+
+    public function test_content_admin_exposes_full_draft_controls_and_inactive_questions(): void
+    {
+        $admin = self::factory()->user->create(['role' => 'administrator']);
+        wp_set_current_user($admin);
+        Activation::activate();
+
+        $publisher = new ContentPublisher();
+        $draft = $publisher->createDraftFromPublished($admin);
+        $question = (new QuestionRepository())->get($draft, 'M02_POLICY');
+        $publisher->updateDraftQuestion($draft, 'M02_POLICY', [
+            'question_text' => $question['question_text'],
+            'help_text' => $question['help_text'],
+            'module_key' => $question['module_key'],
+            'sort_order' => $question['sort_order'],
+            'is_active' => false,
+            'variants' => json_decode($question['variant_json'], true),
+            'applicability' => json_decode($question['applicability_json'], true),
+            'source' => json_decode($question['source_json'], true),
+            'reviewed_by' => $question['reviewed_by'],
+            'last_reviewed' => $question['last_reviewed'],
+            'next_review' => $question['next_review'],
+        ]);
+
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_GET = ['page' => 'acorn-healthcheck-content', 'question' => 'M02_POLICY'];
+
+        ob_start();
+        (new ContentPage())->render();
+        $html = (string) ob_get_clean();
+
+        self::assertStringContainsString('value="M02_POLICY"', $html);
+        self::assertStringContainsString('name="sort_order"', $html);
+        self::assertStringContainsString('name="is_active"', $html);
+        self::assertStringContainsString('name="variant_json"', $html);
+        self::assertStringContainsString('name="source_jurisdictions_json"', $html);
+        self::assertStringContainsString('value="create_recommendation"', $html);
+    }
+
+    public function test_historical_completed_report_survives_later_content_publish(): void
+    {
+        add_filter('pre_wp_mail', '__return_true');
+        [$service, $token] = $this->assessed();
+        $result = (new CompletionService())->complete($token, [
+            'first_name' => 'Historic',
+            'last_name' => 'Tester',
+            'company' => 'Historic Ltd',
+            'email' => 'historic@example.test',
+            'audit_requested' => false,
+        ]);
+        remove_filter('pre_wp_mail', '__return_true');
+
+        $before = (new ReportDataBuilder())->build($result['assessment_id']);
+
+        global $wpdb;
+        $publisher = new ContentPublisher();
+        $draft = $publisher->createDraftFromPublished(1);
+        $wpdb->update(Schema::table('questions'), [
+            'reviewed_by' => 'Named reviewer',
+            'last_reviewed' => '2026-09-18',
+            'next_review' => '2027-09-18',
+        ], ['content_version_id' => $draft]);
+        $wpdb->update(Schema::table('questions'), [
+            'question_text' => 'Completely different future wording?',
+        ], ['content_version_id' => $draft, 'question_key' => 'M01_COMPETENT_PERSON']);
+        $publisher->publish($draft, 1);
+
+        $after = (new ReportDataBuilder())->build($result['assessment_id']);
+        self::assertSame($before, $after);
     }
 
     public function test_draft_recommendation_variants_can_be_created_and_removed(): void
