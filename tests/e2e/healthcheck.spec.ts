@@ -8,6 +8,7 @@ test('visitor completes profile, relevant questions, headline gate and contact c
   await expect(app.getByLabel('Work email')).not.toBeVisible();
   await app.getByRole('button', {name: 'Start my Healthcheck'}).click();
   await completeProfile(page);
+  await expect(app.getByRole('heading', {level: 2})).toHaveText('Do you have competent health and safety support in place?');
 
   for (let i = 0; i < 30; i++) {
     if (await app.getByRole('heading', {name: 'Your Healthcheck is complete'}).isVisible().catch(() => false)) break;
