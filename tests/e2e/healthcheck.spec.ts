@@ -34,3 +34,34 @@ test('plugin assets are not loaded on unrelated pages', async ({page}) => {
   );
   expect(sources.join(' ')).not.toContain('healthcheck.js');
 });
+
+test('profile uses cleaner selectable cards without nested fieldset boxes', async ({page}) => {
+  await page.goto('/health-and-safety-healthcheck/');
+  const app = healthcheck(page);
+
+  await app.getByRole('button', {name: 'Start my Healthcheck'}).click();
+
+  const jurisdiction = app.getByRole('group', {name: 'Jurisdiction'});
+  await expect(jurisdiction).toBeVisible();
+  expect(await jurisdiction.evaluate(el => getComputedStyle(el).borderTopWidth)).toBe('0px');
+
+  const england = app.getByLabel('England');
+  const card = england.locator('..');
+  expect(await card.evaluate(el => getComputedStyle(el).borderRadius)).toBe('14px');
+
+  await england.check();
+  expect(await card.evaluate(el => getComputedStyle(el).backgroundColor)).toBe('rgb(234, 245, 241)');
+});
+
+test('resume landing gives Start again a subdued secondary treatment', async ({page}) => {
+  await page.goto('/health-and-safety-healthcheck/');
+  const app = healthcheck(page);
+
+  await app.getByRole('button', {name: 'Start my Healthcheck'}).click();
+  await page.reload();
+
+  const restart = app.getByRole('button', {name: 'Start again'});
+  await expect(restart).toHaveClass(/acorn-hc__secondary/);
+  expect(await restart.evaluate(el => getComputedStyle(el).backgroundColor)).toBe('rgb(243, 245, 244)');
+});
+
