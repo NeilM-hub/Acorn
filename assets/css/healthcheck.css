@@ -232,3 +232,249 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Executive report */
+.acorn-hc__report--executive {
+  max-width: 72rem;
+}
+
+.acorn-hc__report--executive section {
+  padding: 1.5rem 0;
+  border-top: 1px solid #e1e9e6;
+}
+
+.acorn-hc__report-hero {
+  padding-bottom: 2rem;
+}
+
+.acorn-hc__report-logo {
+  max-width: 190px;
+  max-height: 72px;
+  margin-bottom: 1.5rem;
+}
+
+.acorn-hc__eyebrow {
+  margin: 0 0 .4rem;
+  color: #60756d;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.acorn-hc__report-intro,
+.acorn-hc__report-lead {
+  max-width: 48rem;
+  color: #40544d;
+  font-size: 1.12rem;
+  line-height: 1.6;
+}
+
+.acorn-hc__section-heading {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.acorn-hc__report-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  align-items: center;
+}
+
+.acorn-hc__report-counts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.acorn-hc__report-counts > div {
+  padding: 1.2rem;
+  border: 1px solid #dce6e2;
+  border-radius: 14px;
+  background: #f7fbf9;
+}
+
+.acorn-hc__report-counts strong {
+  display: block;
+  color: var(--acorn);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.acorn-hc__report-counts span {
+  display: block;
+  margin-top: .5rem;
+  color: #40544d;
+}
+
+.acorn-hc__pillar-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .8rem;
+}
+
+.acorn-hc__pillar-card {
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border: 1px solid #dce6e2;
+  border-radius: 12px;
+}
+
+.acorn-hc__status {
+  display: inline-block;
+  padding: .3rem .65rem;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+.acorn-hc__status--priority {
+  background: #fde9e7;
+  color: #8d271f;
+}
+
+.acorn-hc__status--review {
+  background: #fff3d8;
+  color: #76500c;
+}
+
+.acorn-hc__status--addressed {
+  background: #e8f5ef;
+  color: var(--acorn);
+}
+
+.acorn-hc__status--not_assessed {
+  background: #eef1f0;
+  color: #596762;
+}
+
+.acorn-hc__priority-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.acorn-hc__priority-card {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: 1rem;
+  padding: 1.2rem;
+  border: 1px solid #e2e8e5;
+  border-left: 5px solid #b53a31;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.acorn-hc__priority-card h3,
+.acorn-hc__review-list h3 {
+  margin-top: 0;
+  margin-bottom: .45rem;
+}
+
+.acorn-hc__priority-card p {
+  margin: .45rem 0;
+}
+
+.acorn-hc__priority-number {
+  display: grid;
+  width: 2.2rem;
+  height: 2.2rem;
+  place-items: center;
+  border-radius: 50%;
+  background: #fde9e7;
+  color: #8d271f;
+  font-weight: 800;
+}
+
+.acorn-hc__muted {
+  color: #596b64;
+}
+
+.acorn-hc__review-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .85rem;
+  margin-top: 1rem;
+}
+
+.acorn-hc__review-list article {
+  padding: 1rem;
+  border: 1px solid #dce6e2;
+  border-radius: 12px;
+  background: #fbfcfc;
+}
+
+.acorn-hc__review-list p {
+  margin-bottom: 0;
+  color: #40544d;
+}
+
+.acorn-hc__positive-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .65rem 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.acorn-hc__positive-list li {
+  position: relative;
+  padding: .8rem .9rem .8rem 2.3rem;
+  border-radius: 10px;
+  background: #f3f8f5;
+}
+
+.acorn-hc__positive-list li::before {
+  content: "✓";
+  position: absolute;
+  left: .9rem;
+  color: var(--acorn);
+  font-weight: 800;
+}
+
+.acorn-hc__support--executive {
+  padding: 1.5rem !important;
+  border: 0 !important;
+  border-radius: 14px;
+  background: var(--acorn);
+  color: #fff;
+}
+
+.acorn-hc__support--executive h2 {
+  color: #fff;
+}
+
+.acorn-hc__support--executive .acorn-hc__primary {
+  display: inline-block;
+  background: #fff;
+  color: var(--acorn);
+  text-decoration: none;
+}
+
+.acorn-hc__report-disclaimer {
+  color: #687772;
+  font-size: .85rem;
+}
+
+@media (max-width: 48rem) {
+  .acorn-hc__section-heading {
+    display: block;
+  }
+
+  .acorn-hc__report-links {
+    margin-top: 1rem;
+  }
+
+  .acorn-hc__report-counts,
+  .acorn-hc__pillar-grid,
+  .acorn-hc__review-list,
+  .acorn-hc__positive-list {
+    grid-template-columns: 1fr;
+  }
+}
