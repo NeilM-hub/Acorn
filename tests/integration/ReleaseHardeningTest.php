@@ -147,6 +147,66 @@ final class ReleaseHardeningTest extends IntegrationTestCase
         self::assertSame([], $mail['attachments']);
     }
 
+    public function test_failed_admin_fresh_link_resend_restores_previous_report_token(): void
+    {
+        add_filter('pre_wp_mail', '__return_true');
+        [$service, $token] = $this->assessed();
+        $result = (new CompletionService())->complete($token, [
+            'first_name' => 'Ada',
+            'last_name' => 'Lovelace',
+            'company' => 'Admin Resend Failure Ltd',
+            'email' => 'admin-resend-failure@example.test',
+            'audit_requested' => false,
+        ]);
+        remove_filter('pre_wp_mail', '__return_true');
+
+        $repository = new AssessmentRepository();
+        $before = $repository->find($result['assessment_id']);
+        $oldHash = $before['report_token_hash'];
+
+        add_filter('pre_wp_mail', '__return_false');
+        self::assertFalse((new ReportResender())->sendWithFreshToken($result['assessment_id']));
+        remove_filter('pre_wp_mail', '__return_false');
+
+        $after = $repository->find($result['assessment_id']);
+        self::assertSame($oldHash, $after['report_token_hash']);
+        self::assertSame(
+            $result['assessment_id'],
+            (new \Acorn\SafetyHealthcheck\Reports\ReportAccess())->findAssessmentId($result['report_token'])
+        );
+    }
+
+    public function test_successful_admin_fresh_link_resend_rotates_report_token(): void
+    {
+        add_filter('pre_wp_mail', '__return_true');
+        [$service, $token] = $this->assessed();
+        $result = (new CompletionService())->complete($token, [
+            'first_name' => 'Ada',
+            'last_name' => 'Lovelace',
+            'company' => 'Admin Resend Success Ltd',
+            'email' => 'admin-resend-success@example.test',
+            'audit_requested' => false,
+        ]);
+        remove_filter('pre_wp_mail', '__return_true');
+
+        $repository = new AssessmentRepository();
+        $oldHash = $repository->find($result['assessment_id'])['report_token_hash'];
+
+        $mail = [];
+        add_filter('pre_wp_mail', static function ($return, array $atts) use (&$mail) {
+            $mail = $atts;
+            return true;
+        }, 10, 2);
+
+        self::assertTrue((new ReportResender())->sendWithFreshToken($result['assessment_id']));
+        remove_all_filters('pre_wp_mail');
+
+        $newHash = $repository->find($result['assessment_id'])['report_token_hash'];
+        self::assertNotSame($oldHash, $newHash);
+        self::assertStringContainsString('/healthcheck/report/', $mail['message']);
+        self::assertNull((new \Acorn\SafetyHealthcheck\Reports\ReportAccess())->findAssessmentId($result['report_token']));
+    }
+
     public function test_draft_question_editor_persists_full_question_controls(): void
     {
         global $wpdb;
