@@ -1,1 +1,1 @@
-import{test,expect}from'@playwright/test';test('web shell remains available independently of email and PDF',async({page})=>{await page.goto('/health-and-safety-healthcheck/');await expect(page.locator('#acorn-healthcheck')).toBeVisible();});
+import{test,expect}from'@playwright/test';test('invalid report token remains private',async({page})=>{const response=await page.goto('/healthcheck/report/not-a-report-token/');expect(response?.status()).toBe(404);await expect(page.locator('body')).not.toContainText('assessment_token_hash');});

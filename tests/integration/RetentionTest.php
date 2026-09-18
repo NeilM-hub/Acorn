@@ -1,2 +1,3 @@
 <?php
-declare(strict_types=1);use PHPUnit\Framework\TestCase;final class RetentionTest extends TestCase{public function test_security_baseline():void{self::assertTrue(true);}}
+declare(strict_types=1);use Acorn\SafetyHealthcheck\Assessment\AssessmentService;use Acorn\SafetyHealthcheck\Database\Schema;use Acorn\SafetyHealthcheck\Privacy\Retention;
+final class RetentionTest extends IntegrationTestCase{public function test_old_incomplete_assessment_and_answers_are_deleted():void{$x=(new AssessmentService)->start();global$wpdb;$row=$wpdb->get_row('SELECT * FROM '.Schema::table('assessments').' LIMIT 1',ARRAY_A);$wpdb->update(Schema::table('assessments'),['last_activity_at'=>'2000-01-01 00:00:00'],['id'=>$row['id']]);(new Retention)->cleanup();self::assertSame('0',$wpdb->get_var('SELECT COUNT(*) FROM '.Schema::table('assessments')));}}

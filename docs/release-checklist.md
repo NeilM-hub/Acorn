@@ -19,7 +19,7 @@
 - [ ] Fire, Legionella, and Asbestos are conditional and proportionate.
 - [ ] Client can use the report independently without contacting Acorn.
 
-## Launch approvals
+## Launch approvals (all outstanding until completed by Acorn)
 
 - [ ] Health & Safety content signed off by an Acorn competent H&S reviewer.
 - [ ] Fire metadata reviewed for England, Wales, Scotland, and Northern Ireland.
