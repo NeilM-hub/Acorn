@@ -74,7 +74,7 @@
   border-radius: 14px;
   background: #fff;
   cursor: pointer;
-  transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+  transition: border-color .2s ease, box-shadow .2s ease;
 }
 
 .acorn-hc__choice:hover {
@@ -170,7 +170,8 @@
   border-radius: 14px;
   background: #fff;
   cursor: pointer;
-  transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+  pointer-events: none;
+  transition: border-color .2s ease, box-shadow .2s ease;
 }
 
 .acorn-hc__answer:hover span {
@@ -182,6 +183,11 @@
   border-color: var(--acorn);
   background: var(--acorn-soft);
   box-shadow: 0 0 0 1px var(--acorn) inset;
+}
+
+.acorn-hc__answer input:focus-visible + span {
+  outline: 3px solid #e89b25;
+  outline-offset: 3px;
 }
 
 .acorn-hc__summary {
