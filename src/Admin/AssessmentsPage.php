@@ -37,20 +37,20 @@ final class AssessmentsPage
             wp_die('A completed report is required.', 409);
         }
 
-        $raw = \Acorn\SafetyHealthcheck\Assessment\AssessmentRepository::token();
-        $wpdb->update(
-            Schema::table('assessments'),
-            ['report_token_hash' => hash('sha256', $raw)],
-            ['id' => $id]
-        );
+        try {
+            $sent = (new \Acorn\SafetyHealthcheck\Notifications\ReportResender())->sendWithFreshToken($id);
+        } catch (\Throwable $error) {
+            $sent = false;
+        }
 
-        $url = home_url('/healthcheck/report/' . rawurlencode($raw) . '/');
-        if (!(new \Acorn\SafetyHealthcheck\Notifications\ReportResender())->send($id, $url)) {
+        if (!$sent) {
             $wpdb->update(
                 Schema::table('assessments'),
                 [
                     'email_status' => 'failed',
-                    'email_last_error' => wp_json_encode(['customer' => 'Admin resend failed.']),
+                    'email_last_error' => wp_json_encode([
+                        'customer' => 'Admin resend failed; the previous secure report link remains valid.',
+                    ]),
                 ],
                 ['id' => $id]
             );
