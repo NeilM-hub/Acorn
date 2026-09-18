@@ -7,11 +7,16 @@ final class ReportController
 {
     public function register(): void
     {
+        add_action('init', [$this, 'registerRewriteRules']);
+        add_action('template_redirect', [$this, 'render']);
+    }
+
+    public function registerRewriteRules(): void
+    {
         add_rewrite_rule('^healthcheck/report/([A-Za-z0-9_-]+)/pdf/?$', 'index.php?acorn_hc_report=$matches[1]&acorn_hc_pdf=1', 'top');
         add_rewrite_rule('^healthcheck/report/([A-Za-z0-9_-]+)/?$', 'index.php?acorn_hc_report=$matches[1]', 'top');
         add_rewrite_tag('%acorn_hc_report%', '([A-Za-z0-9_-]+)');
         add_rewrite_tag('%acorn_hc_pdf%', '1');
-        add_action('template_redirect', [$this, 'render']);
     }
 
     public function render(): void
