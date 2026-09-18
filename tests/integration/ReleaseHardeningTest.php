@@ -7,6 +7,7 @@ use Acorn\SafetyHealthcheck\Activation;
 use Acorn\SafetyHealthcheck\Admin\ContentPage;
 use Acorn\SafetyHealthcheck\Content\{ContentPublisher, ContentVersionRepository, QuestionRepository};
 use Acorn\SafetyHealthcheck\Database\Schema;
+use Acorn\SafetyHealthcheck\Notifications\ReportResender;
 use Acorn\SafetyHealthcheck\Reports\ReportDataBuilder;
 
 final class ReleaseHardeningTest extends IntegrationTestCase
@@ -88,6 +89,62 @@ final class ReleaseHardeningTest extends IntegrationTestCase
         self::assertSame('partial', $assessment['email_status']);
         self::assertArrayNotHasKey('customer', $errors);
         self::assertArrayHasKey('internal', $errors);
+    }
+
+    public function test_report_resender_attaches_pdf_when_available(): void
+    {
+        add_filter('pre_wp_mail', '__return_true');
+        [$service, $token] = $this->assessed();
+        $result = (new CompletionService())->complete($token, [
+            'first_name' => 'Ada',
+            'last_name' => 'Lovelace',
+            'company' => 'Resend Ltd',
+            'email' => 'resend-service@example.test',
+            'audit_requested' => false,
+        ]);
+        remove_filter('pre_wp_mail', '__return_true');
+
+        $mail = [];
+        add_filter('pre_wp_mail', static function ($return, array $atts) use (&$mail) {
+            $mail = $atts;
+            $mail['attachment_exists'] = !empty($atts['attachments'][0]) && is_file($atts['attachments'][0]);
+            return true;
+        }, 10, 2);
+
+        self::assertTrue((new ReportResender())->send($result['assessment_id'], $result['report_url']));
+        remove_all_filters('pre_wp_mail');
+
+        self::assertTrue($mail['attachment_exists']);
+        self::assertCount(1, $mail['attachments']);
+        self::assertSame('resend-service@example.test', $mail['to']);
+    }
+
+    public function test_report_resender_sends_without_attachment_if_pdf_generation_fails(): void
+    {
+        add_filter('pre_wp_mail', '__return_true');
+        [$service, $token] = $this->assessed();
+        $result = (new CompletionService())->complete($token, [
+            'first_name' => 'Ada',
+            'last_name' => 'Lovelace',
+            'company' => 'Resend PDF Failure Ltd',
+            'email' => 'resend-no-pdf@example.test',
+            'audit_requested' => false,
+        ]);
+        remove_filter('pre_wp_mail', '__return_true');
+
+        add_filter('acorn_hc_pdf_temp_path', '__return_false');
+        $mail = [];
+        add_filter('pre_wp_mail', static function ($return, array $atts) use (&$mail) {
+            $mail = $atts;
+            return true;
+        }, 10, 2);
+
+        self::assertTrue((new ReportResender())->send($result['assessment_id'], $result['report_url']));
+
+        remove_all_filters('pre_wp_mail');
+        remove_filter('acorn_hc_pdf_temp_path', '__return_false');
+
+        self::assertSame([], $mail['attachments']);
     }
 
     public function test_draft_question_editor_persists_full_question_controls(): void
