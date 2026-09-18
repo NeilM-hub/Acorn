@@ -24,7 +24,41 @@ final class AssessmentsPage
     }
 
     public function downloadPdf(): void { $id=$this->authorisedAssessment('acorn_hc_pdf');(new PdfGenerator())->stream((new ReportDataBuilder())->build($id),'Acorn-Healthcheck-'.$id.'.pdf');exit; }
-    public function resend(): void { $id=$this->authorisedAssessment('acorn_hc_resend');global$wpdb;$assessment=$wpdb->get_row($wpdb->prepare('SELECT status FROM '.Schema::table('assessments').' WHERE id=%d',$id),ARRAY_A);if(($assessment['status']??'')!=='completed')wp_die('A completed report is required.',409);$raw=\Acorn\SafetyHealthcheck\Assessment\AssessmentRepository::token();$wpdb->update(Schema::table('assessments'),['report_token_hash'=>hash('sha256',$raw)],['id'=>$id]);(new \Acorn\SafetyHealthcheck\Notifications\CustomerMailer())->send($id,home_url('/healthcheck/report/'.rawurlencode($raw).'/'));wp_safe_redirect(admin_url('admin.php?page=acorn-healthcheck-assessments&assessment='.$id));exit; }
+    public function resend(): void
+    {
+        $id = $this->authorisedAssessment('acorn_hc_resend');
+        global $wpdb;
+
+        $assessment = $wpdb->get_row(
+            $wpdb->prepare('SELECT status FROM ' . Schema::table('assessments') . ' WHERE id=%d', $id),
+            ARRAY_A
+        );
+        if (($assessment['status'] ?? '') !== 'completed') {
+            wp_die('A completed report is required.', 409);
+        }
+
+        $raw = \Acorn\SafetyHealthcheck\Assessment\AssessmentRepository::token();
+        $wpdb->update(
+            Schema::table('assessments'),
+            ['report_token_hash' => hash('sha256', $raw)],
+            ['id' => $id]
+        );
+
+        $url = home_url('/healthcheck/report/' . rawurlencode($raw) . '/');
+        if (!(new \Acorn\SafetyHealthcheck\Notifications\ReportResender())->send($id, $url)) {
+            $wpdb->update(
+                Schema::table('assessments'),
+                [
+                    'email_status' => 'failed',
+                    'email_last_error' => wp_json_encode(['customer' => 'Admin resend failed.']),
+                ],
+                ['id' => $id]
+            );
+        }
+
+        wp_safe_redirect(admin_url('admin.php?page=acorn-healthcheck-assessments&assessment=' . $id));
+        exit;
+    }
 
     private function detail(int $id): void
     {
