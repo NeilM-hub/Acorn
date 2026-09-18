@@ -21,7 +21,47 @@ final class Plugin
         (new \Acorn\SafetyHealthcheck\Privacy\ExportEraser())->register();
         do_action('acorn_hc_booted', $this);
     }
-    public function adminAssets(string $hook): void { if (str_contains($hook, 'acorn-healthcheck')) wp_enqueue_style('acorn-healthcheck-admin', plugins_url('assets/css/admin.css', ACORN_HC_FILE), [], ACORN_HC_VERSION); }
-    public function shortcode(): string { ob_start(); require ACORN_HC_DIR . 'templates/shortcode-shell.php'; return (string) ob_get_clean(); }
-    public function assets(): void { global $post; if (!$post || !has_shortcode((string) $post->post_content, 'acorn_safety_healthcheck')) return; wp_enqueue_style('acorn-healthcheck', plugins_url('assets/css/healthcheck.css', ACORN_HC_FILE), [], ACORN_HC_VERSION); wp_enqueue_script('acorn-healthcheck', plugins_url('assets/js/healthcheck.js', ACORN_HC_FILE), [], ACORN_HC_VERSION, true); wp_script_add_data('acorn-healthcheck', 'type', 'module'); }
+
+    public function adminAssets(string $hook): void
+    {
+        if (str_contains($hook, 'acorn-healthcheck')) {
+            wp_enqueue_style(
+                'acorn-healthcheck-admin',
+                plugins_url('assets/css/admin.css', ACORN_HC_FILE),
+                [],
+                ACORN_HC_VERSION
+            );
+        }
+    }
+
+    public function shortcode(): string
+    {
+        ob_start();
+        require ACORN_HC_DIR . 'templates/shortcode-shell.php';
+
+        return (string) ob_get_clean();
+    }
+
+    public function assets(): void
+    {
+        global $post;
+
+        if (!$post || !has_shortcode((string) $post->post_content, 'acorn_safety_healthcheck')) {
+            return;
+        }
+
+        wp_enqueue_style(
+            'acorn-healthcheck',
+            plugins_url('assets/css/healthcheck.css', ACORN_HC_FILE),
+            [],
+            ACORN_HC_VERSION
+        );
+
+        wp_enqueue_script_module(
+            'acorn-healthcheck',
+            plugins_url('assets/js/healthcheck.js', ACORN_HC_FILE),
+            [],
+            ACORN_HC_VERSION
+        );
+    }
 }
