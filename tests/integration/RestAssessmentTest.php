@@ -65,10 +65,11 @@ final class RestAssessmentTest extends IntegrationTestCase
         add_filter('pre_wp_mail', '__return_true');
         [, $token] = $this->assessed();
         $request = new WP_REST_Request('POST', "/acorn-healthcheck/v1/assessments/$token/complete");
-        $request->set_body_params([
+        $request->set_header('content-type', 'application/json');
+        $request->set_body(wp_json_encode([
             'first_name'=>'Ada','last_name'=>'Lovelace','company'=>'REST Ltd',
             'email'=>'rest@example.test','audit_requested'=>false,'marketing_consent'=>false,
-        ]);
+        ]));
         $response = $this->server->dispatch($request);
         self::assertSame(200, $response->get_status());
         $public = $response->get_data();
