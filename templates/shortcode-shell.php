@@ -1,0 +1,4 @@
+<section class="acorn-hc" id="acorn-healthcheck" data-rest="<?php echo esc_url(rest_url('acorn-healthcheck/v1')); ?>" data-report-base="<?php echo esc_url(home_url('/healthcheck/report/')); ?>">
+ <div class="acorn-hc__app" aria-live="polite"><h1>Free Health &amp; Safety Healthcheck</h1><p>Get a clearer picture of your current arrangements across Health &amp; Safety, Fire Safety, Legionella and Asbestos.</p><ul><li>Personalised recommendations</li><li>Priority action plan</li><li>Downloadable report</li><li>Around 5 minutes</li></ul><p class="acorn-hc__notice">This tool provides an indicative self-assessment based on the information you enter. It does not constitute a formal health and safety audit, legal advice or confirmation of compliance.</p><button class="acorn-hc__primary" type="button" data-action="start">Start my Healthcheck</button></div>
+ <noscript>JavaScript is required to complete this Healthcheck.</noscript>
+</section>

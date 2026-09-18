@@ -1,0 +1,3 @@
+<?php
+declare(strict_types=1);use Acorn\SafetyHealthcheck\Assessment\{CompletionService,AssessmentRepository};
+final class SecurityRegressionTest extends IntegrationTestCase{public function test_contact_html_is_sanitised_and_raw_tokens_are_not_stored():void{[$s,$token]=$this->assessed();$result=(new CompletionService)->complete($token,['first_name'=>'<script>x</script>Ada','last_name'=>'Test','company'=>'<b>Company</b>','email'=>'safe@example.test','audit_requested'=>false]);global$wpdb;$contact=$wpdb->get_row("SELECT * FROM {$wpdb->prefix}acorn_hc_contacts LIMIT 1",ARRAY_A);self::assertStringNotContainsString('<',$contact['company']);self::assertStringNotContainsString($token,(new AssessmentRepository)->find($result['assessment_id'])['assessment_token_hash']);}}

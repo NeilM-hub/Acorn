@@ -1,0 +1,6 @@
+const KEY='acorn_hc_session_v1';
+export const load=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'null');}catch{return null;}};
+export const save=value=>localStorage.setItem(KEY,JSON.stringify(value));
+export const clear=()=>localStorage.removeItem(KEY);
+export function saveLocalPendingMutation(mutation){const state=load()||{pending:[]};state.pending=[...(state.pending||[]),mutation];save(state);}
+export async function flushPendingMutations(sender){const state=load();if(!state)return;for(const mutation of state.pending||[])await sender(mutation,state.token);state.pending=[];state.lastSeenAt=new Date().toISOString();save(state);}

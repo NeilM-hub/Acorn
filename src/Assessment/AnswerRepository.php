@@ -1,0 +1,3 @@
+<?php
+declare(strict_types=1);namespace Acorn\SafetyHealthcheck\Assessment;use Acorn\SafetyHealthcheck\Database\Schema;
+final class AnswerRepository{public function all(int $id):array{global $wpdb;return$wpdb->get_results($wpdb->prepare('SELECT * FROM '.Schema::table('answers').' WHERE assessment_id=%d',$id),ARRAY_A);}public function deleteExcluded(int $id,array $keys):void{global $wpdb;if(!$keys){$wpdb->delete(Schema::table('answers'),['assessment_id'=>$id]);return;}$marks=implode(',',array_fill(0,count($keys),'%s'));$wpdb->query($wpdb->prepare('DELETE FROM '.Schema::table('answers')." WHERE assessment_id=%d AND question_key NOT IN ($marks)",array_merge([$id],$keys)));}}

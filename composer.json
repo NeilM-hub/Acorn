@@ -1,0 +1,24 @@
+{
+  "name": "acorn/acorn-safety-healthcheck",
+  "description": "Client-first Health & Safety Healthcheck for Acorn Safety Services.",
+  "type": "wordpress-plugin",
+  "license": "proprietary",
+  "require": {
+    "php": ">=8.1",
+    "dompdf/dompdf": "^3.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.6",
+    "yoast/phpunit-polyfills": "^2.0.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Acorn\\SafetyHealthcheck\\": "src/"
+    }
+  },
+  "scripts": {
+    "test:unit": "phpunit --testsuite unit",
+    "test:integration": "npx wp-env run tests-cli bash -lc 'plugin_file=\"$(find /var/www/html/wp-content/plugins -mindepth 2 -maxdepth 2 -type f -name acorn-safety-healthcheck.php -print -quit)\"; test -n \"$plugin_file\"; cd \"$(dirname \"$plugin_file\")\"; vendor/bin/phpunit --testsuite integration'",
+    "test": "@test:unit && @test:integration"
+  }
+}

@@ -1,0 +1,120 @@
+name: V1 verification
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v1-verification-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  php81:
+    name: PHP 8.1 compatibility
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          coverage: none
+          tools: composer:v2
+      - run: composer install --no-interaction --prefer-dist --no-progress
+      - run: find . -path './vendor' -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l
+      - run: composer test:unit
+
+  verify:
+    name: PHP, WordPress, browser, and release verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+          tools: composer:v2
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Validate Composer configuration
+        run: composer validate --strict
+
+      - name: Check PHP syntax
+        run: find . -path './vendor' -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Run PHPUnit unit tests
+        run: composer test:unit
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Audit production Node dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Start WordPress test environment
+        run: |
+          npm run wp:start
+          echo "WP_ENV_STARTED=true" >> "$GITHUB_ENV"
+
+      - name: Run WordPress integration tests
+        run: composer test:integration
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright end-to-end tests
+        run: npm run test:e2e
+
+      - name: Run accessibility tests
+        run: npm run test:a11y
+
+      - name: Build installable plugin ZIP
+        run: bash bin/build-zip.sh
+
+      - name: Verify plugin ZIP
+        run: |
+          test -s dist/acorn-safety-healthcheck-1.0.0.zip
+          unzip -t dist/acorn-safety-healthcheck-1.0.0.zip
+          unzip -Z1 dist/acorn-safety-healthcheck-1.0.0.zip | grep -q '^acorn-safety-healthcheck/'
+          unzip -p dist/acorn-safety-healthcheck-1.0.0.zip acorn-safety-healthcheck/acorn-safety-healthcheck.php | grep -q 'Version: 1.0.0'
+          unzip -Z1 dist/acorn-safety-healthcheck-1.0.0.zip | grep -q '^acorn-safety-healthcheck/vendor/autoload.php$'
+          ! unzip -Z1 dist/acorn-safety-healthcheck-1.0.0.zip | grep -E '^acorn-safety-healthcheck/(tests/|docs/|node_modules/|\.github/|phpunit\.xml(\.dist)?$|playwright\.config(\.ts|\.js)?$|package(-lock)?\.json$|\.wp-env(\.json)?$)'
+
+      - name: Run clean release ZIP smoke test
+        run: bash bin/smoke-release-zip.sh
+
+      - name: Upload release ZIP
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acorn-safety-healthcheck-1.0.0
+          path: dist/acorn-safety-healthcheck-1.0.0.zip
+          if-no-files-found: error
+
+      - name: Upload browser diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-diagnostics
+          path: |
+            test-results/
+            playwright-report/
+          if-no-files-found: ignore
+
+      - name: Stop WordPress test environment
+        if: ${{ always() && env.WP_ENV_STARTED == 'true' }}
+        run: npm run wp:stop
