@@ -22,4 +22,5 @@ if (getenv('WP_TESTS_DIR')) {
     require_once $testsDir . '/includes/functions.php';
     tests_add_filter('muplugins_loaded', static function () use ($root): void { require $root . '/acorn-safety-healthcheck.php'; });
     require $testsDir . '/includes/bootstrap.php';
+    require_once $root . '/tests/integration/IntegrationTestCase.php';
 }
