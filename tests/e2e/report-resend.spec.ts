@@ -20,7 +20,7 @@ test('completed report offers a customer resend control', async ({page}) => {
   await app.getByRole('button', {name: 'View my full report'}).click();
 
   const report = page.locator('.acorn-hc__report');
-  const button = report.getByRole('button', {name: 'Resend report email'});
+  const button = report.getByRole('button', {name: 'Resend email'});
   await expect(button).toBeVisible();
 
   await page.route('**/wp-json/acorn-healthcheck/v1/reports/*/resend', async route => {
