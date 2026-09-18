@@ -12,6 +12,49 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  bootstrap-locks:
+    name: Bootstrap dependency locks
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+          tools: composer:v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Generate dependency locks
+        run: |
+          composer install --no-interaction --prefer-dist --no-progress
+          npm install
+
+      - name: Commit dependency locks when missing or changed
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          git add composer.lock package-lock.json
+          if git diff --cached --quiet; then
+            echo "Dependency locks already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "build: lock PHP and Node dependencies"
+          git push origin "HEAD:$HEAD_REF"
+
   php81:
     name: PHP 8.1 compatibility
     runs-on: ubuntu-latest
@@ -62,6 +105,9 @@ jobs:
       - name: Install Node dependencies
         run: npm install
 
+      - name: Audit production Node dependencies
+        run: npm audit --omit=dev --audit-level=high
+
       - name: Upload generated dependency locks
         uses: actions/upload-artifact@v4
         with:
@@ -99,6 +145,9 @@ jobs:
           unzip -p dist/acorn-safety-healthcheck-1.0.0.zip acorn-safety-healthcheck/acorn-safety-healthcheck.php | grep -q 'Version: 1.0.0'
           unzip -Z1 dist/acorn-safety-healthcheck-1.0.0.zip | grep -q '^acorn-safety-healthcheck/vendor/autoload.php$'
           ! unzip -Z1 dist/acorn-safety-healthcheck-1.0.0.zip | grep -E '^acorn-safety-healthcheck/(tests/|docs/|node_modules/|\.github/|phpunit\.xml(\.dist)?$|playwright\.config(\.ts|\.js)?$|package(-lock)?\.json$|\.wp-env(\.json)?$)'
+
+      - name: Run clean release ZIP smoke test
+        run: bash bin/smoke-release-zip.sh
 
       - name: Upload release ZIP
         if: success()
