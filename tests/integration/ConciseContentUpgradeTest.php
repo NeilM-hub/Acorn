@@ -60,12 +60,26 @@ final class ConciseContentUpgradeTest extends IntegrationTestCase
     {
         $service = new AssessmentService();
         $before = $service->start();
+        $beforeAssessment = (new \Acorn\SafetyHealthcheck\Assessment\AssessmentRepository())->findByToken($before['token']);
 
         ConciseContentUpgrade::installIfNeeded();
 
         $after = $service->start();
+        $afterAssessment = (new \Acorn\SafetyHealthcheck\Assessment\AssessmentRepository())->findByToken($after['token']);
 
-        self::assertSame('1.0', $before['content_version']);
-        self::assertSame('1.1', $after['content_version']);
+        self::assertSame(
+            '1.0',
+            (string) $GLOBALS['wpdb']->get_var($GLOBALS['wpdb']->prepare(
+                'SELECT version_key FROM ' . Schema::table('content_versions') . ' WHERE id=%d',
+                $beforeAssessment['content_version_id']
+            ))
+        );
+        self::assertSame(
+            '1.1',
+            (string) $GLOBALS['wpdb']->get_var($GLOBALS['wpdb']->prepare(
+                'SELECT version_key FROM ' . Schema::table('content_versions') . ' WHERE id=%d',
+                $afterAssessment['content_version_id']
+            ))
+        );
     }
 }
