@@ -1,3 +1,62 @@
 <?php
-declare(strict_types=1);use Acorn\SafetyHealthcheck\Rest\AssessmentController;
-final class RestAssessmentTest extends IntegrationTestCase{public function test_start_and_resume_never_expose_internal_fields():void{(new AssessmentController)->register();$response=rest_do_request(new WP_REST_Request('POST','/acorn-healthcheck/v1/assessments'));self::assertSame(201,$response->get_status());$data=$response->get_data();$json=wp_json_encode($data);self::assertNotEmpty($data['token']);foreach(['assessment_token_hash','report_token_hash','snapshot_json','contact_id','service_tags_json','email_last_error','pdf_last_error']as$field)self::assertStringNotContainsString($field,$json);}public function test_invalid_answer_is_rejected():void{[$service,$token]=$this->assessed();$request=new WP_REST_Request('PUT',"/acorn-healthcheck/v1/assessments/$token/answers/M01_COMPETENT_PERSON");$request->set_body_params(['answer'=>'compliant']);$response=rest_do_request($request);self::assertContains($response->get_status(),[400,409]);}}
+
+declare(strict_types=1);
+
+final class RestAssessmentTest extends IntegrationTestCase
+{
+    private WP_REST_Server $server;
+
+    public function set_up(): void
+    {
+        parent::set_up();
+
+        global $wp_rest_server;
+        $this->server = new WP_REST_Server();
+        $wp_rest_server = $this->server;
+        do_action('rest_api_init', $this->server);
+    }
+
+    public function tear_down(): void
+    {
+        global $wp_rest_server;
+        $wp_rest_server = null;
+
+        parent::tear_down();
+    }
+
+    public function test_start_and_resume_never_expose_internal_fields(): void
+    {
+        $response = $this->server->dispatch(
+            new WP_REST_Request('POST', '/acorn-healthcheck/v1/assessments')
+        );
+
+        self::assertSame(201, $response->get_status());
+        $data = $response->get_data();
+        $json = wp_json_encode($data);
+        self::assertNotEmpty($data['token']);
+
+        foreach (['assessment_token_hash', 'report_token_hash', 'snapshot_json', 'contact_id', 'service_tags_json', 'email_last_error', 'pdf_last_error'] as $field) {
+            self::assertStringNotContainsString($field, $json);
+        }
+
+        $resume = $this->server->dispatch(
+            new WP_REST_Request('GET', '/acorn-healthcheck/v1/assessments/' . $data['token'])
+        );
+        self::assertSame(200, $resume->get_status());
+        self::assertStringNotContainsString('assessment_token_hash', wp_json_encode($resume->get_data()));
+    }
+
+    public function test_invalid_answer_is_rejected(): void
+    {
+        [, $token] = $this->assessed();
+        $request = new WP_REST_Request(
+            'PUT',
+            "/acorn-healthcheck/v1/assessments/$token/answers/M01_COMPETENT_PERSON"
+        );
+        $request->set_body_params(['answer' => 'compliant']);
+
+        $response = $this->server->dispatch($request);
+
+        self::assertContains($response->get_status(), [400, 409]);
+    }
+}
