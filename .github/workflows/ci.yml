@@ -62,6 +62,15 @@ jobs:
       - name: Install Node dependencies
         run: npm install
 
+      - name: Upload generated dependency locks
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-dependency-locks
+          path: |
+            composer.lock
+            package-lock.json
+          if-no-files-found: error
+
       - name: Start WordPress test environment
         run: |
           npm run wp:start
@@ -90,6 +99,14 @@ jobs:
           unzip -p dist/acorn-safety-healthcheck-1.0.0.zip acorn-safety-healthcheck/acorn-safety-healthcheck.php | grep -q 'Version: 1.0.0'
           unzip -Z1 dist/acorn-safety-healthcheck-1.0.0.zip | grep -q '^acorn-safety-healthcheck/vendor/autoload.php$'
           ! unzip -Z1 dist/acorn-safety-healthcheck-1.0.0.zip | grep -E '^acorn-safety-healthcheck/(tests/|docs/|node_modules/|\.github/|phpunit\.xml(\.dist)?$|playwright\.config(\.ts|\.js)?$|package(-lock)?\.json$|\.wp-env(\.json)?$)'
+
+      - name: Upload release ZIP
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acorn-safety-healthcheck-1.0.0
+          path: dist/acorn-safety-healthcheck-1.0.0.zip
+          if-no-files-found: error
 
       - name: Upload browser diagnostics
         if: failure()
