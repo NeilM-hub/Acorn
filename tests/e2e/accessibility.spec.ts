@@ -55,6 +55,6 @@ test('all public stages meet WCAG A/AA and support keyboard operation', async ({
   await app.getByRole('button', {name: 'View my full report'}).click();
 
   const report = page.locator('.acorn-hc__report');
-  await expect(report.getByRole('heading', {name: 'Health & Safety Healthcheck Report'})).toBeVisible();
+  await expect(report.getByRole('heading', {name: 'Your Health & Safety Healthcheck'})).toBeVisible();
   await expectAccessible(page, 'report', '.acorn-hc__report');
 });
