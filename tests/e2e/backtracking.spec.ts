@@ -4,6 +4,7 @@ import {answerCurrentQuestion, completeProfile, healthcheck, questionAnswer} fro
 test('online reload offers resume without storing contact data', async ({page}) => {
   await page.goto('/health-and-safety-healthcheck/');
   await healthcheck(page).getByRole('button', {name: 'Start my Healthcheck'}).click();
+  await expect(healthcheck(page).getByRole('heading', {name: 'A couple of details so we can tailor the Healthcheck'})).toBeVisible();
   await page.reload();
   await expect(healthcheck(page).getByRole('button', {name: 'Continue Healthcheck'})).toBeVisible();
 
