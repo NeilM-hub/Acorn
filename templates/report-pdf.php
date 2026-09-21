@@ -22,8 +22,9 @@ a{color:inherit}
 .meta{color:#647887;margin-bottom:4px}
 .prepared{margin-top:14px;color:#084e87;font-weight:bold}
 .section{margin-bottom:19px}
-.section-heading{margin-bottom:11px}
-.eyebrow{font-size:7.4pt;text-transform:uppercase;letter-spacing:1px;color:#60788a;font-weight:bold;margin-bottom:5px}
+.section-heading{margin-bottom:11px;page-break-inside:avoid;page-break-after:avoid}
+.section-intro{page-break-inside:avoid;page-break-after:avoid;margin-bottom:8px}
+.eyebrow{font-size:7.4pt;text-transform:uppercase;letter-spacing:1px;color:#60788a;font-weight:bold;margin-bottom:5px;page-break-after:avoid}
 .lead{font-size:10.5pt;line-height:1.55;color:#445c6d;margin-bottom:16px}
 .counts{width:100%;border-collapse:separate;border-spacing:7px 0;margin:0 -7px 16px}
 .counts td{width:33.33%;border:1px solid #d9e4ed;border-radius:10px;padding:14px 11px;background:#f5f9fc;vertical-align:top}
@@ -124,8 +125,10 @@ a{color:inherit}
 </section>
 
 <section class="section">
+<div class="section-intro">
 <div class="eyebrow">Deal with these first</div>
 <h2>Your priority action plan</h2>
+</div>
 <?php if(!$report['priority']):?><p class="lead">No priority actions were identified from your responses.</p><?php endif;?>
 <?php foreach($report['priority'] as $index=>$item):?>
 <article class="priority-card">
@@ -145,9 +148,11 @@ a{color:inherit}
 </section>
 
 <section class="section">
+<div class="section-intro">
 <div class="eyebrow">Worth checking</div>
 <h2>Other things worth reviewing</h2>
 <p class="lead">These are not priority actions, but your answers suggest they are worth checking or confirming.</p>
+</div>
 <?php if(!$report['review']):?><p>No additional review items were identified.</p><?php else:?>
 <table class="review-grid">
 <?php foreach(array_chunk($report['review'],2) as $row):?><tr>
@@ -162,9 +167,11 @@ a{color:inherit}
 </section>
 
 <section class="section">
+<div class="section-intro">
 <div class="eyebrow">Positive findings</div>
 <h2>What you're already doing well</h2>
 <p class="lead">Your answers did not identify an obvious gap in these areas.</p>
+</div>
 <?php if(!$report['addressed']):?><p>No positive findings were recorded in this assessment.</p><?php else:?>
 <table class="positive-table">
 <?php foreach(array_chunk($report['addressed'],2) as $row):?><tr>
