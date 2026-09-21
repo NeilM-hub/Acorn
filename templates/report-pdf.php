@@ -12,12 +12,18 @@ h2{font-size:18pt;line-height:1.15;color:#084e87;margin:0 0 10px}
 h3{font-size:11.8pt;line-height:1.28;color:#163a55;margin:0 0 6px}
 a{color:inherit}
 .footer{position:fixed;bottom:-10mm;left:0;right:0;padding-top:4px;border-top:1px solid #d9e4ed;color:#71808c;font-size:7.2pt}
-.cover{page-break-after:always;position:relative;min-height:245mm;padding:10mm 7mm 0}
-.cover-band{position:absolute;left:-17mm;right:-17mm;top:-18mm;height:10mm;background:#084e87}
-.cover-logo{max-width:205px;max-height:78px;margin:8mm 0 29mm}
-.cover-kicker{font-size:9pt;text-transform:uppercase;letter-spacing:1.4px;color:#587184;font-weight:bold;margin-bottom:12px}
-.cover-subtitle{max-width:455px;font-size:13pt;line-height:1.5;color:#4c6273;margin-bottom:36px}
-.cover-meta{margin-top:29mm;padding-top:14px;border-top:1px solid #d9e4ed}
+.cover{page-break-after:always;position:relative;min-height:245mm;padding:0}
+.cover-hero{margin:-18mm -17mm 0;padding:18mm 17mm 19mm;background:#084e87;color:#fff}
+.cover-logo-wrap{display:inline-block;padding:7px 9px;border-radius:8px;background:#fff;margin-bottom:20mm}
+.cover-logo{display:block;max-width:190px;max-height:70px;margin:0}
+.cover-kicker{font-size:8.5pt;text-transform:uppercase;letter-spacing:1.35px;color:#d8ebf8;font-weight:bold;margin-bottom:11px}
+.cover-hero h1{max-width:460px;color:#fff;font-size:33pt;line-height:1.02;margin:0 0 14px;letter-spacing:-.5px}
+.cover-subtitle{max-width:470px;font-size:12.5pt;line-height:1.55;color:#edf6fb;margin-bottom:18px}
+.cover-authority{display:inline-block;padding:7px 10px;border:1px solid #6ea0c3;border-radius:14px;background:#0d5f9f;color:#fff;font-size:8.8pt;font-weight:bold}
+.cover-body{padding:18mm 7mm 0}
+.cover-complete{font-size:12pt;color:#084e87;font-weight:bold;margin-bottom:7px}
+.cover-next{font-size:19pt;line-height:1.2;color:#173f5b;font-weight:bold;margin-bottom:23mm}
+.cover-meta{padding-top:14px;border-top:1px solid #d9e4ed}
 .cover-company{font-size:15pt;color:#183b55;font-weight:bold;margin-bottom:7px}
 .meta{color:#647887;margin-bottom:4px}
 .prepared{margin-top:14px;color:#084e87;font-weight:bold}
@@ -74,7 +80,8 @@ a{color:inherit}
 .support-options td{width:50%;padding:9px 10px;border:1px solid rgba(255,255,255,.35);border-radius:7px;vertical-align:top}
 .support-options strong{display:block;color:#fff;margin-bottom:3px}
 .support-options p{margin:0;color:#eef6fb}
-.support{page-break-before:always;page-break-inside:avoid;margin-top:0;padding:20px 18px;border-radius:10px;background:#084e87;color:#fff}
+.support{page-break-before:always;page-break-inside:avoid;min-height:218mm;margin:0;padding:24px 20px;border-radius:10px;background:#084e87;color:#fff}
+.support--full-page{min-height:218mm}
 .authority-box{margin:10px 0;padding:10px;border:1px solid rgba(255,255,255,.35);border-radius:7px;background:#0b5b95}
 .authority-box h3{color:#fff;margin-bottom:5px}
 .authority-box p{color:#edf6fb;margin-bottom:7px}
@@ -82,7 +89,7 @@ a{color:inherit}
 .authority-list td{width:33.33%;padding:8px;border:1px solid rgba(255,255,255,.25);border-radius:6px;vertical-align:top}
 .authority-list strong{display:block;color:#fff;margin-bottom:3px}
 .authority-list p{margin:0;color:#edf6fb;font-size:8pt}
-.support h2{color:#fff;margin-bottom:6px;font-size:16pt}
+.support h2{color:#fff;margin-bottom:8px;font-size:19pt;line-height:1.15}
 .support p{margin-bottom:8px}
 .support .cta{font-weight:bold;margin-top:11px}
 .support .cta a{display:inline-block;color:#084e87;background:#fff;padding:7px 10px;border-radius:5px;text-decoration:none;margin-right:7px;margin-bottom:5px}
@@ -94,16 +101,22 @@ a{color:inherit}
 <div class="footer"><?php echo esc_html($report['branding']['pdf_footer']); ?></div>
 
 <section class="cover">
-<div class="cover-band"></div>
-<?php if($report['branding']['logo_data']):?><img class="cover-logo" src="<?php echo esc_attr($report['branding']['logo_data']);?>" alt="Acorn Safety Services"><?php else:?><div class="cover-kicker">Acorn Safety Services</div><?php endif;?>
-<div class="cover-kicker">Health &amp; Safety Healthcheck</div>
+<div class="cover-hero">
+<?php if($report['branding']['logo_data']):?><span class="cover-logo-wrap"><img class="cover-logo" src="<?php echo esc_attr($report['branding']['logo_data']);?>" alt="Acorn Safety Services"></span><?php endif;?>
+<div class="cover-kicker">Your Acorn Safety Healthcheck</div>
 <h1>Your Health &amp; Safety<br>Healthcheck</h1>
 <p class="cover-subtitle">A practical snapshot of what's working, what needs attention and what to do next.</p>
+<div class="cover-authority">Specialist guidance across Health &amp; Safety, Fire Safety, Legionella and Asbestos.</div>
+</div>
+<div class="cover-body">
+<p class="cover-complete">Your Healthcheck is complete.</p>
+<p class="cover-next">Now turn the findings into action.</p>
 <div class="cover-meta">
 <p class="cover-company"><?php echo esc_html($report['meta']['company']);?></p>
 <p class="meta">Assessment date: <?php echo esc_html($report['meta']['assessment_date']);?></p>
 <p class="prepared">Prepared by Acorn Safety Services</p>
 <p class="meta"><?php echo esc_html($report['branding']['phone']);?> &nbsp;|&nbsp; <?php echo esc_html($report['branding']['website']);?></p>
+</div>
 </div>
 </section>
 
@@ -133,11 +146,10 @@ a{color:inherit}
 
 <table class="pillars">
 <?php foreach(array_chunk($report['pillars'],2) as $row):?><tr>
-<?php foreach($row as $pillar):?><td>
+<?php foreach($row as $pillar):?><td<?php echo count($report['pillars'])===1?' class="pillar-wide" colspan="2"':'';?>>
 <div class="pillar-name"><?php echo esc_html($pillar['label']);?></div>
 <span class="status status-<?php echo esc_attr($pillar['status']);?>"><?php echo esc_html($pillar['display_status']);?></span>
 </td><?php endforeach;?>
-<?php if(count($row)===1):?><td></td><?php endif;?>
 </tr><?php endforeach;?>
 </table>
 <p class="disclaimer"><?php echo esc_html($report['disclaimer']);?></p>
@@ -218,7 +230,7 @@ a{color:inherit}
 </table>
 <?php endif;?>
 
-<div class="support">
+<div class="support support--full-page">
 <div class="eyebrow" style="color:#d6eafa">How Acorn Safety Services can help</div>
 <h2><?php echo esc_html($report['support']['heading']);?></h2>
 <p><?php echo esc_html($report['support']['body']);?></p>
