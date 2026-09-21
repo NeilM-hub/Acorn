@@ -52,9 +52,14 @@ test('landing page presents the complete Acorn Safety Healthcheck proposition', 
   await expect(app.getByRole('heading', {name: 'Knowing the gaps is the first step. Fixing them is what matters.'})).toBeVisible();
   await expect(app.getByRole('heading', {name: 'Ready to see where things stand?'})).toBeVisible();
 
-  await expect(app.getByText('2 Priority actions', {exact: true})).toBeVisible();
-  await expect(app.getByText('4 Worth reviewing', {exact: true})).toBeVisible();
-  await expect(app.getByText('10 Areas looking good', {exact: true})).toBeVisible();
+  const previewCounts = app.locator('.acorn-hc__landing-preview-counts > div');
+  await expect(previewCounts).toHaveCount(3);
+  await expect(previewCounts.nth(0)).toContainText('2');
+  await expect(previewCounts.nth(0)).toContainText('Priority actions');
+  await expect(previewCounts.nth(1)).toContainText('4');
+  await expect(previewCounts.nth(1)).toContainText('Worth reviewing');
+  await expect(previewCounts.nth(2)).toContainText('10');
+  await expect(previewCounts.nth(2)).toContainText('Areas looking good');
 
   await expect(app.getByRole('link', {name: 'Request a free Compliance Audit'})).toHaveAttribute(
     'href',
