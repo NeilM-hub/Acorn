@@ -49,6 +49,7 @@
 <p><strong>What we found:</strong> <?php echo esc_html($item['display_identified']);?></p>
 <p><strong>What to do next:</strong> <?php echo esc_html($item['display_action']);?></p>
 <?php if(!empty($item['display_why'])):?><p class="acorn-hc__muted"><strong>Why it matters:</strong> <?php echo esc_html($item['display_why']);?></p><?php endif;?>
+<?php if(!empty($item['display_good_looks'])):?><p class="acorn-hc__muted"><strong>What good looks like:</strong> <?php echo esc_html($item['display_good_looks']);?></p><?php endif;?>
 </div>
 </article>
 <?php endforeach;?>
