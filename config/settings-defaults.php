@@ -6,7 +6,7 @@ return [
     'report_contact_phone'=>'01604 930380',
     'report_website'=>'https://acornhealthandsafety.co.uk/',
     'customer_email_subject'=>'Your Acorn Health & Safety Healthcheck',
-    'internal_recipient'=>get_option('admin_email'),
+    'internal_recipient'=>'info@acornhealthandsafety.co.uk',
     'audit_cta_url'=>'https://acornhealthandsafety.co.uk/health-and-safety-compliance-audit/',
     'privacy_policy_url'=>get_privacy_policy_url(),
     'completed_retention_days'=>730,
