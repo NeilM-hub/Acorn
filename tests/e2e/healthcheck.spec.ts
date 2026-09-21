@@ -35,6 +35,35 @@ test('visitor completes simplified guided Healthcheck and reaches report', async
   await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: "What you're already doing well"})).toBeVisible();
 });
 
+
+test('landing page presents the complete Acorn Safety Healthcheck proposition', async ({page}) => {
+  await page.goto('/health-and-safety-healthcheck/');
+  const app = healthcheck(page);
+
+  await expect(app.locator('.acorn-hc__landing')).toBeVisible();
+  await expect(app.getByRole('img', {name: 'Acorn Safety Services'})).toBeVisible();
+  await expect(app.getByRole('heading', {level: 1, name: /Find the gaps\./})).toBeVisible();
+
+  await expect(app.getByRole('heading', {name: 'More than a checklist'})).toBeVisible();
+  await expect(app.getByRole('heading', {name: 'A clearer picture in a few minutes'})).toBeVisible();
+  await expect(app.getByRole('heading', {name: 'The Healthcheck looks across the areas businesses often need to manage together'})).toBeVisible();
+  await expect(app.getByRole('heading', {name: 'Problems are easier to deal with when you can see them clearly.'})).toBeVisible();
+  await expect(app.getByRole('heading', {name: 'See exactly where to focus'})).toBeVisible();
+  await expect(app.getByRole('heading', {name: 'Knowing the gaps is the first step. Fixing them is what matters.'})).toBeVisible();
+  await expect(app.getByRole('heading', {name: 'Ready to see where things stand?'})).toBeVisible();
+
+  await expect(app.getByText('2 Priority actions', {exact: true})).toBeVisible();
+  await expect(app.getByText('4 Worth reviewing', {exact: true})).toBeVisible();
+  await expect(app.getByText('10 Areas looking good', {exact: true})).toBeVisible();
+
+  await expect(app.getByRole('link', {name: 'Request a free Compliance Audit'})).toHaveAttribute(
+    'href',
+    'https://acornhealthandsafety.co.uk/health-and-safety-compliance-audit/',
+  );
+
+  await expect(app.getByRole('button', {name: /Start my.*Healthcheck/})).toHaveCount(3);
+});
+
 test('plugin assets are not loaded on unrelated pages', async ({page}) => {
   await page.goto('/');
   const sources = await page.locator('script,link').evaluateAll(nodes =>
