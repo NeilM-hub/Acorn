@@ -134,8 +134,11 @@ final class ExecutiveReportTest extends IntegrationTestCase
         self::assertContains('Legionella', $supportLabels);
         self::assertContains('Asbestos', $supportLabels);
         self::assertSame('Request a free Health & Safety Compliance Audit', $report['support']['cta_label']);
-        self::assertSame('Talk to us about ongoing Health & Safety support', $report['support']['secondary_cta_label']);
+        self::assertSame('Speak to an Acorn specialist', $report['support']['secondary_cta_label']);
         self::assertStringStartsWith('tel:', $report['support']['secondary_cta_url']);
+        self::assertSame("Don't leave the gaps sitting on a page.", $report['support']['heading']);
+        self::assertSame('One specialist team. Four critical compliance disciplines.', $report['support']['authority_heading']);
+        self::assertCount(3, $report['support']['authority_points']);
 
         ob_start();
         require dirname(__DIR__, 2) . '/templates/report-pdf.php';
@@ -148,7 +151,9 @@ final class ExecutiveReportTest extends IntegrationTestCase
         self::assertStringContainsString('How Acorn can help', $pdfHtml);
         self::assertStringContainsString('What should you do next?', $pdfHtml);
         self::assertStringContainsString('How Acorn Safety Services can help', $pdfHtml);
-        self::assertStringContainsString('Talk to us about ongoing Health &amp; Safety support', $pdfHtml);
+        self::assertStringContainsString("Don't leave the gaps sitting on a page.", $pdfHtml);
+        self::assertStringContainsString('One specialist team. Four critical compliance disciplines.', $pdfHtml);
+        self::assertStringContainsString('Speak to an Acorn specialist', $pdfHtml);
         self::assertStringNotContainsString('section-break', $pdfHtml);
 
         $data = $report;
