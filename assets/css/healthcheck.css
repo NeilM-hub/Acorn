@@ -1629,13 +1629,13 @@
   margin-bottom:1rem;
 }
 .acorn-hc__landing-final-micro{
-  color:#647d8e;
+  color:#526a7b;
 }
 .acorn-hc__landing-disclaimer{
   margin:0;
   padding:1rem clamp(1.5rem,5vw,4rem) 1.5rem;
   border-top:1px solid #e1e9ef;
-  color:#6b7d89;
+  color:#586c79;
   font-size:.78rem;
   line-height:1.55;
   text-align:center;
