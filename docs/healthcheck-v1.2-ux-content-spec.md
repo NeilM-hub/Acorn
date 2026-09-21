@@ -849,16 +849,18 @@ Historical 1.0/1.1 records remain unchanged.
 
 # 19. Visual design system
 
-Reuse the current Acorn Healthcheck palette as the base.
+Use the Acorn Safety Services brand palette as the base.
 
 Core tokens:
-- Acorn green: `#155c4a`
+- Acorn Safety primary accent blue: `#084e87`
 - Ink: `#17221f`
 - Muted text: `#60756d`
 - Soft surface: `#f7fbf9`
 - Border: `#dce6e2`
 
 Design principles:
+- Acorn Safety blue `#084e87` is the primary branded accent throughout the Healthcheck;
+- do not use Acorn Analytical green as the main Healthcheck brand colour;
 - impact comes from scale, space, hierarchy and motion — not loud colour;
 - avoid traffic-light semantics;
 - statuses must remain understandable without colour;
@@ -892,7 +894,7 @@ Collapsed:
 **ⓘ What does this mean?**
 
 Expanded:
-- pale neutral/green-tinted panel
+- pale neutral/blue-tinted panel
 - plain-English paragraph
 - divider
 - **What good looks like** line
