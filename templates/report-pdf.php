@@ -74,7 +74,14 @@ a{color:inherit}
 .support-options td{width:50%;padding:9px 10px;border:1px solid rgba(255,255,255,.35);border-radius:7px;vertical-align:top}
 .support-options strong{display:block;color:#fff;margin-bottom:3px}
 .support-options p{margin:0;color:#eef6fb}
-.support{page-break-inside:avoid;margin-top:20px;padding:16px 17px;border-radius:10px;background:#084e87;color:#fff}
+.support{page-break-before:always;page-break-inside:avoid;margin-top:0;padding:20px 18px;border-radius:10px;background:#084e87;color:#fff}
+.authority-box{margin:10px 0;padding:10px;border:1px solid rgba(255,255,255,.35);border-radius:7px;background:#0b5b95}
+.authority-box h3{color:#fff;margin-bottom:5px}
+.authority-box p{color:#edf6fb;margin-bottom:7px}
+.authority-list{width:100%;border-collapse:separate;border-spacing:6px;margin:0 -6px}
+.authority-list td{width:33.33%;padding:8px;border:1px solid rgba(255,255,255,.25);border-radius:6px;vertical-align:top}
+.authority-list strong{display:block;color:#fff;margin-bottom:3px}
+.authority-list p{margin:0;color:#edf6fb;font-size:8pt}
 .support h2{color:#fff;margin-bottom:6px;font-size:16pt}
 .support p{margin-bottom:8px}
 .support .cta{font-weight:bold;margin-top:11px}
@@ -215,6 +222,13 @@ a{color:inherit}
 <div class="eyebrow" style="color:#d6eafa">How Acorn Safety Services can help</div>
 <h2><?php echo esc_html($report['support']['heading']);?></h2>
 <p><?php echo esc_html($report['support']['body']);?></p>
+<div class="authority-box">
+<h3><?php echo esc_html($report['support']['authority_heading']);?></h3>
+<p><?php echo esc_html($report['support']['authority_intro']);?></p>
+<table class="authority-list"><tr>
+<?php foreach(($report['support']['authority_points'] ?? []) as $point):?><td><strong><?php echo esc_html($point['title']);?></strong><p><?php echo esc_html($point['body']);?></p></td><?php endforeach;?>
+</tr></table>
+</div>
 <?php if(!empty($report['support']['options'] ?? [])):?><table class="support-options">
 <?php foreach(array_chunk(($report['support']['options'] ?? []),2) as $row):?><tr>
 <?php foreach($row as $option):?><td><strong><?php echo esc_html($option['label']);?></strong><p><?php echo esc_html($option['body']);?></p></td><?php endforeach;?>
