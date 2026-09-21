@@ -3,7 +3,7 @@ import {answerCurrentQuestion, completeProfile, healthcheck, questionAnswer} fro
 
 test('online reload offers resume without storing contact data', async ({page}) => {
   await page.goto('/health-and-safety-healthcheck/');
-  await healthcheck(page).getByRole('button', {name: 'Start my Healthcheck'}).click();
+  await healthcheck(page).getByRole('button', {name: /Start my.*Healthcheck/}).first().click();
   await expect(healthcheck(page).getByRole('heading', {name: 'A couple of details so we can tailor the Healthcheck'})).toBeVisible();
   await page.reload();
   await expect(healthcheck(page).getByRole('button', {name: 'Continue Healthcheck'})).toBeVisible();
@@ -15,7 +15,7 @@ test('online reload offers resume without storing contact data', async ({page}) 
 
 test('network failure queues an answer and reconnect flushes it', async ({page, context}) => {
   await page.goto('/health-and-safety-healthcheck/');
-  await healthcheck(page).getByRole('button', {name: 'Start my Healthcheck'}).click();
+  await healthcheck(page).getByRole('button', {name: /Start my.*Healthcheck/}).first().click();
   await completeProfile(page);
 
   await context.setOffline(true);
@@ -31,7 +31,7 @@ test('Back restores the previous question and selected answer', async ({page}) =
   await page.goto('/health-and-safety-healthcheck/');
   const app = healthcheck(page);
 
-  await app.getByRole('button', {name: 'Start my Healthcheck'}).click();
+  await app.getByRole('button', {name: /Start my.*Healthcheck/}).first().click();
   await completeProfile(page);
 
   await answerCurrentQuestion(page, 'Partly');
@@ -48,7 +48,7 @@ test('changing progressive context removes a hidden conditional answer', async (
   await page.goto('/health-and-safety-healthcheck/');
   const app = healthcheck(page);
 
-  await app.getByRole('button', {name: 'Start my Healthcheck'}).click();
+  await app.getByRole('button', {name: /Start my.*Healthcheck/}).first().click();
   await completeProfile(page);
 
   const session = await page.evaluate(() => JSON.parse(localStorage.getItem('acorn_hc_session_v1') || '{}'));
