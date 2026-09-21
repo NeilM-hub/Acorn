@@ -35,6 +35,6 @@
     <a href="<?php echo esc_url($reportUrl); ?>" style="display:inline-block;padding:13px 19px;border-radius:8px;background:#084e87;color:#ffffff;text-decoration:none;font-weight:700">View your secure report</a>
   </p>
 
-  <p style="margin:0 0 8px;color:#60788a;font-size:12px">Your PDF report is attached to this email for easy reference.</p>
+  <?php if(!empty($attachment)):?><p style="margin:0 0 8px;color:#60788a;font-size:12px">Your PDF report is attached to this email for easy reference.</p><?php endif;?>
   <p style="margin:0;color:#6e7e89;font-size:12px"><?php echo esc_html($data['disclaimer']); ?></p>
 </div>
