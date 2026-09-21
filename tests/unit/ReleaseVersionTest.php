@@ -10,7 +10,7 @@ final class ReleaseVersionTest extends TestCase
     {
         $bootstrap = file_get_contents(dirname(__DIR__, 2) . '/acorn-safety-healthcheck.php');
 
-        self::assertMatchesRegularExpression('/Version:\\s*1\\.0\\.2/', $bootstrap);
+        self::assertMatchesRegularExpression('/Version:\\s*1\\.0\\.3/', $bootstrap);
         self::assertStringContainsString("define('ACORN_HC_VERSION', '1.0.3')", $bootstrap);
         self::assertStringContainsString(
             'acorn-safety-healthcheck-1.0.3.zip',
