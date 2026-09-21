@@ -887,3 +887,143 @@
     animation-duration: .01ms !important;
   }
 }
+
+
+/* v1.2.1 executive report polish */
+.acorn-hc__report--executive{
+  max-width:76rem;
+  padding:clamp(1.5rem,4vw,3.25rem);
+  border-color:#d8e4ed;
+  box-shadow:0 24px 70px rgba(13,43,67,.08);
+}
+.acorn-hc__report-hero{
+  position:relative;
+  padding:0 0 2.2rem;
+}
+.acorn-hc__report-hero::before{
+  content:"";
+  display:block;
+  width:4rem;
+  height:.38rem;
+  margin-bottom:1.35rem;
+  border-radius:999px;
+  background:#084e87;
+}
+.acorn-hc__report-logo{
+  max-width:220px;
+  max-height:88px;
+  margin-bottom:1.6rem;
+}
+.acorn-hc__report-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.55rem 1rem;
+  margin-top:1.2rem;
+  color:#617484;
+  font-size:.92rem;
+}
+.acorn-hc__report-meta span{
+  position:relative;
+}
+.acorn-hc__report-meta span::before{
+  content:"•";
+  margin-right:.75rem;
+  color:#9aabb7;
+}
+.acorn-hc__top-actions{
+  margin:1.75rem 0;
+  padding:1.15rem 1.25rem;
+  border:1px solid #d5e2eb;
+  border-radius:16px;
+  background:linear-gradient(135deg,#f8fbfe,#eef6fb);
+}
+.acorn-hc__top-actions article{
+  display:grid;
+  grid-template-columns:2.25rem 1fr auto;
+  gap:1rem;
+  align-items:center;
+  padding:.85rem 0;
+  border-top:1px solid #dbe7ee;
+}
+.acorn-hc__top-actions article:first-of-type{
+  border-top:0;
+}
+.acorn-hc__top-actions h3{
+  margin:0 0 .2rem;
+  color:#1a3d57;
+}
+.acorn-hc__top-actions p{
+  margin:0;
+  color:#587083;
+}
+.acorn-hc__top-number{
+  display:grid;
+  width:2rem;
+  height:2rem;
+  place-items:center;
+  border-radius:50%;
+  background:#084e87;
+  color:#fff;
+  font-weight:800;
+}
+.acorn-hc__priority-card{
+  grid-template-columns:2.5rem 1fr;
+  padding:1.35rem;
+  border-color:#d8e3eb;
+  border-left-color:#b5473d;
+  border-radius:16px;
+  box-shadow:0 12px 30px rgba(13,43,67,.04);
+}
+.acorn-hc__finding-block{
+  margin:.9rem 0;
+}
+.acorn-hc__finding-block > span{
+  display:block;
+  margin-bottom:.2rem;
+  color:#60788a;
+  font-size:.78rem;
+  font-weight:800;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+.acorn-hc__finding-block p{
+  margin:0;
+  color:#3f586a;
+}
+.acorn-hc__finding-block--next > span{
+  color:#084e87;
+}
+.acorn-hc__good-box{
+  margin-top:1rem;
+  padding:.95rem 1rem;
+  border-left:4px solid #084e87;
+  border-radius:10px;
+  background:#f2f8fd;
+  color:#355267;
+}
+.acorn-hc__action-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.75rem 1.5rem;
+  margin-top:1rem;
+  padding-top:.9rem;
+  border-top:1px solid #e0e8ee;
+  color:#607386;
+  font-size:.88rem;
+}
+.acorn-hc__review-list article{
+  border-color:#d8e3eb;
+  border-radius:14px;
+  background:#fbfdfe;
+}
+.acorn-hc__review-list article h3{
+  color:#1d4059;
+}
+@media(max-width:48rem){
+  .acorn-hc__report-meta{display:grid;gap:.3rem}
+  .acorn-hc__report-meta span::before{display:none}
+  .acorn-hc__top-actions article{grid-template-columns:2rem 1fr}
+  .acorn-hc__top-actions .acorn-hc__status{grid-column:2;justify-self:start}
+  .acorn-hc__priority-card{grid-template-columns:1fr}
+  .acorn-hc__priority-number{margin-bottom:.35rem}
+}
