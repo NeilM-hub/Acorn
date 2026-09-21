@@ -148,6 +148,10 @@ final class ExecutiveReportTest extends IntegrationTestCase
         self::assertStringContainsString('Do this next', $pdfHtml);
         self::assertStringContainsString('Suggested owner', $pdfHtml);
         self::assertStringContainsString('Prepared by Acorn Safety Services', $pdfHtml);
+        self::assertStringContainsString('class="cover-hero"', $pdfHtml);
+        self::assertStringContainsString('Your Healthcheck is complete.', $pdfHtml);
+        self::assertStringContainsString('Now turn the findings into action.', $pdfHtml);
+        self::assertStringContainsString('Specialist guidance across Health &amp; Safety, Fire Safety, Legionella and Asbestos.', $pdfHtml);
         self::assertStringContainsString('How Acorn can help', $pdfHtml);
         self::assertStringContainsString('What should you do next?', $pdfHtml);
         self::assertStringContainsString('How Acorn Safety Services can help', $pdfHtml);
@@ -166,4 +170,50 @@ final class ExecutiveReportTest extends IntegrationTestCase
         self::assertStringContainsString('Your first priority', $emailHtml);
         self::assertStringContainsString('Competent health and safety support', $emailHtml);
     }
+
+
+    public function test_v1_2_pdf_uses_full_width_for_a_single_applicable_pillar(): void
+    {
+        ConciseContentUpgrade::installIfNeeded();
+        SimplifiedContentUpgrade::installIfNeeded();
+
+        $service = new AssessmentService();
+        $start = $service->start();
+        $state = $service->updateProfile($start['token'], [
+            'jurisdiction' => 'england',
+            'employee_band' => 'none',
+            'fire_safety_responsibility' => 'no',
+            'water_system_responsibility' => 'no',
+            'asbestos_responsibility' => 'no',
+            'risk_flags' => [],
+        ]);
+
+        foreach ($state->questions as $question) {
+            $service->saveAnswer($start['token'], $question['question_key'], 'yes');
+        }
+
+        $service->assess($start['token']);
+        add_filter('pre_wp_mail', '__return_true');
+        $completed = (new CompletionService())->complete($start['token'], [
+            'first_name' => 'Single',
+            'last_name' => 'Pillar',
+            'company' => 'Single Pillar Ltd',
+            'email' => 'single-pillar@example.test',
+            'audit_requested' => false,
+            'marketing_consent' => false,
+        ]);
+        remove_filter('pre_wp_mail', '__return_true');
+
+        $report = (new ReportDataBuilder())->build($completed['assessment_id']);
+        self::assertCount(1, $report['pillars']);
+
+        ob_start();
+        require dirname(__DIR__, 2) . '/templates/report-pdf.php';
+        $pdfHtml = (string) ob_get_clean();
+
+        self::assertStringContainsString('class="pillar-wide"', $pdfHtml);
+        self::assertStringNotContainsString('class="pillar-empty"', $pdfHtml);
+        self::assertStringContainsString('class="support support--full-page"', $pdfHtml);
+    }
+
 }
