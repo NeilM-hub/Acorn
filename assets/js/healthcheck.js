@@ -90,8 +90,9 @@ if(root){
  }
 
  function helpPanel(help){
+  const normalized=String(help||'').replace(/\\n/g,'\n');
   const marker='\n\nWhat good looks like:';
-  const parts=String(help||'').split(marker);
+  const parts=normalized.split(marker);
   const good=parts[1]||'';
   return `<button class="acorn-hc__help" type="button" aria-expanded="false" aria-controls="question-help">ⓘ What does this mean?</button>
     <div class="acorn-hc__help-panel" id="question-help" hidden>
