@@ -14,10 +14,7 @@ final class InternalMailer
         $assessment = (new AssessmentRepository())->find($assessmentId);
         $contact = (new ContactRepository())->find((int) $assessment['contact_id']);
         $report = (new ReportDataBuilder())->build($assessmentId);
-        $defaults = require dirname(__DIR__, 2) . '/config/settings-defaults.php';
-        $settings = array_merge($defaults, get_option('acorn_hc_settings', []));
-
-        $to = (string) ($settings['internal_recipient'] ?? 'info@acornhealthandsafety.co.uk');
+        $to = 'info@acornhealthandsafety.co.uk';
         $priorityCount = (int) ($assessment['priority_count'] ?? 0);
         $priorityLabel = $priorityCount === 1 ? 'Priority Action' : 'Priority Actions';
 
