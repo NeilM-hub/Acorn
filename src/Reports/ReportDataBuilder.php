@@ -75,6 +75,9 @@ final class ReportDataBuilder
             ] as $key => $label
         ) {
             $status = $pillarStatus[$key] ?? 'not_assessed';
+            if (($snapshot['content_version'] ?? '') === '1.2' && $status === 'not_assessed') {
+                continue;
+            }
             $pillars[] = [
                 'key' => $key,
                 'label' => $label,
