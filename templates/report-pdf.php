@@ -44,30 +44,42 @@ a{color:inherit}
 .status-review{background:#fff3d8;color:#76500c}
 .status-addressed{background:#e8f2fb;color:#084e87}
 .status-not_assessed{background:#eef1f0;color:#596762}
-.priority-card{page-break-inside:avoid;border:1px solid #d7e3ec;border-radius:10px;margin:0 0 12px;background:#fff}
-.priority-head{padding:11px 13px 9px;background:#f6fafe;border-bottom:1px solid #d7e3ec}
-.priority-label{font-size:7.2pt;text-transform:uppercase;letter-spacing:.8px;color:#a3362c;font-weight:bold;margin-bottom:4px}
-.priority-body{padding:11px 13px}
-.info-block{margin:0 0 8px}
+.priority-card{page-break-inside:avoid;border:1px solid #d7e3ec;border-radius:10px;margin:0 0 9px;background:#fff}
+.priority-head{padding:9px 11px 7px;background:#f6fafe;border-bottom:1px solid #d7e3ec}
+.priority-label{font-size:7.1pt;text-transform:uppercase;letter-spacing:.8px;color:#a3362c;font-weight:bold;margin-bottom:3px}
+.priority-body{padding:9px 11px}
+.info-block{margin:0 0 6px}
 .info-label{display:block;font-size:7.6pt;text-transform:uppercase;letter-spacing:.55px;color:#60788a;font-weight:bold;margin-bottom:2px}
 .info-label.next{color:#084e87}
 .info-text{margin:0;color:#344e61}
-.good-box{margin-top:9px;padding:8px 10px;border-left:3px solid #084e87;background:#f2f8fd;border-radius:4px}
-.action-meta{width:100%;border-collapse:collapse;margin-top:9px;border-top:1px solid #e2eaf0}
-.action-meta td{padding:7px 7px 0 0;color:#536b7c;font-size:8pt;vertical-align:top}
+.good-box{margin-top:7px;padding:7px 9px;border-left:3px solid #084e87;background:#f2f8fd;border-radius:4px}
+.help-box{margin-top:7px;padding:7px 9px;border:1px solid #d6e5ef;background:#fbfdff;border-radius:5px;color:#344e61}
+.help-box strong{color:#084e87}
+.action-meta{width:100%;border-collapse:collapse;margin-top:7px;border-top:1px solid #e2eaf0}
+.action-meta td{padding:6px 7px 0 0;color:#536b7c;font-size:7.8pt;vertical-align:top}
 .action-meta strong{color:#29465b}
 .review-grid{width:100%;border-collapse:separate;border-spacing:7px;margin:0 -7px}
 .review-grid td{width:50%;padding:11px;border:1px solid #d9e4ed;border-radius:9px;background:#fbfcfd;vertical-align:top}
 .review-grid h3{font-size:10pt}
 .review-grid p{margin-bottom:0;color:#465f71}
+.next-steps{width:100%;border-collapse:separate;border-spacing:7px;margin:0 -7px 10px}
+.next-steps td{width:50%;padding:10px;border:1px solid #d9e4ed;border-radius:8px;background:#fbfdff;vertical-align:top}
+.next-step-number{display:inline-block;width:18px;height:18px;line-height:18px;text-align:center;border-radius:50%;background:#084e87;color:#fff;font-size:7pt;font-weight:bold;margin-right:5px}
+.next-steps strong{color:#1c4059}
+.next-steps p{margin:5px 0 0;color:#465f71}
 .positive-table{width:100%;border-collapse:separate;border-spacing:7px;margin:0 -7px}
 .positive-table td{width:50%;padding:9px 10px;background:#f3f8fc;border:1px solid #e2ebf1;border-radius:7px;vertical-align:top;color:#334d60}
 .tick{color:#084e87;font-weight:bold;margin-right:5px}
+.support-options{width:100%;border-collapse:separate;border-spacing:7px;margin:8px -7px}
+.support-options td{width:50%;padding:9px 10px;border:1px solid rgba(255,255,255,.35);border-radius:7px;vertical-align:top}
+.support-options strong{display:block;color:#fff;margin-bottom:3px}
+.support-options p{margin:0;color:#eef6fb}
 .support{page-break-inside:avoid;margin-top:20px;padding:16px 17px;border-radius:10px;background:#084e87;color:#fff}
 .support h2{color:#fff;margin-bottom:6px;font-size:16pt}
 .support p{margin-bottom:8px}
 .support .cta{font-weight:bold;margin-top:11px}
-.support .cta a{color:#084e87;background:#fff;padding:7px 10px;border-radius:5px;text-decoration:none}
+.support .cta a{display:inline-block;color:#084e87;background:#fff;padding:7px 10px;border-radius:5px;text-decoration:none;margin-right:7px;margin-bottom:5px}
+.support .cta a.secondary{color:#fff;background:transparent;border:1px solid rgba(255,255,255,.65)}
 .disclaimer{margin-top:14px;padding-top:9px;border-top:1px solid #dce6ed;color:#6e7e89;font-size:7.5pt}
 </style>
 </head>
@@ -141,6 +153,7 @@ a{color:inherit}
 <div class="info-block"><span class="info-label next">Do this next</span><p class="info-text"><?php echo esc_html($item['display_action']);?></p></div>
 <?php if(!empty($item['display_why'])):?><div class="info-block"><span class="info-label">Why it matters</span><p class="info-text"><?php echo esc_html($item['display_why']);?></p></div><?php endif;?>
 <?php if(!empty($item['display_good_looks'])):?><div class="good-box"><strong>What good looks like:</strong> <?php echo esc_html($item['display_good_looks']);?></div><?php endif;?>
+<?php if(!empty($item['display_acorn_help'])):?><div class="help-box"><strong>How Acorn can help:</strong> <?php echo esc_html($item['display_acorn_help']);?></div><?php endif;?>
 <table class="action-meta"><tr><td><strong>Suggested owner:</strong> <?php echo esc_html($item['display_owner']);?></td><td><strong>Suggested priority:</strong> <?php echo esc_html($item['display_priority']);?></td></tr></table>
 </div>
 </article>
@@ -168,6 +181,23 @@ a{color:inherit}
 
 <section class="section">
 <div class="section-intro">
+<div class="eyebrow">Practical next steps</div>
+<h2>What should you do next?</h2>
+<p class="lead">Use this report as a working action plan rather than a one-off checklist.</p>
+</div>
+<table class="next-steps">
+<?php foreach(array_chunk($report['next_steps'],2) as $row):?><tr>
+<?php foreach($row as $index=>$step):?><td>
+<div><span class="next-step-number"><?php echo (int)(array_search($step,$report['next_steps'],true)+1);?></span><strong><?php echo esc_html($step['title']);?></strong></div>
+<p><?php echo esc_html($step['body']);?></p>
+</td><?php endforeach;?>
+<?php if(count($row)===1):?><td></td><?php endif;?>
+</tr><?php endforeach;?>
+</table>
+</section>
+
+<section class="section">
+<div class="section-intro">
 <div class="eyebrow">Positive findings</div>
 <h2>What you're already doing well</h2>
 <p class="lead">Your answers did not identify an obvious gap in these areas.</p>
@@ -182,9 +212,19 @@ a{color:inherit}
 <?php endif;?>
 
 <div class="support">
+<div class="eyebrow" style="color:#d6eafa">How Acorn Safety Services can help</div>
 <h2><?php echo esc_html($report['support']['heading']);?></h2>
 <p><?php echo esc_html($report['support']['body']);?></p>
-<p class="cta"><a href="<?php echo esc_url($report['support']['cta_url']);?>"><?php echo esc_html($report['support']['cta_label']);?></a></p>
+<?php if(!empty($report['support']['options'])):?><table class="support-options">
+<?php foreach(array_chunk($report['support']['options'],2) as $row):?><tr>
+<?php foreach($row as $option):?><td><strong><?php echo esc_html($option['label']);?></strong><p><?php echo esc_html($option['body']);?></p></td><?php endforeach;?>
+<?php if(count($row)===1):?><td></td><?php endif;?>
+</tr><?php endforeach;?>
+</table><?php endif;?>
+<p class="cta">
+<a href="<?php echo esc_url($report['support']['cta_url']);?>"><?php echo esc_html($report['support']['cta_label']);?></a>
+<a class="secondary" href="<?php echo esc_url($report['support']['secondary_cta_url']);?>"><?php echo esc_html($report['support']['secondary_cta_label']);?></a>
+</p>
 <p><?php echo esc_html($report['branding']['phone']);?> &nbsp;|&nbsp; <?php echo esc_html($report['branding']['website']);?></p>
 </div>
 
