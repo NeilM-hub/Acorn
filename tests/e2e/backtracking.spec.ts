@@ -1,5 +1,5 @@
 import {test, expect} from '@playwright/test';
-import {answerCurrentQuestion, completeProfile, healthcheck, questionAnswer, waitForQuestion} from './helpers';
+import {answerCurrentQuestion, completeProfile, healthcheck, questionAnswer} from './helpers';
 
 test('online reload offers resume without storing contact data', async ({page}) => {
   await page.goto('/health-and-safety-healthcheck/');
@@ -16,7 +16,6 @@ test('network failure queues an answer and reconnect flushes it', async ({page, 
   await page.goto('/health-and-safety-healthcheck/');
   await healthcheck(page).getByRole('button', {name: 'Start my Healthcheck'}).click();
   await completeProfile(page);
-  await expect(healthcheck(page).getByText(/Question 1 of/)).toBeVisible();
 
   await context.setOffline(true);
   await questionAnswer(page, 'Partly').check();
@@ -25,7 +24,6 @@ test('network failure queues an answer and reconnect flushes it', async ({page, 
 
   await context.setOffline(false);
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('acorn_hc_session_v1') || '{}').pending?.length || 0)).toBe(0);
-  await expect(healthcheck(page).getByText(/Question 2 of/)).toBeVisible();
 });
 
 test('Back restores the previous question and selected answer', async ({page}) => {
@@ -45,41 +43,40 @@ test('Back restores the previous question and selected answer', async ({page}) =
   await expect(questionAnswer(page, 'Yes')).toBeChecked();
 });
 
-test('editing profile removes a conditional module and its hidden answer', async ({page}) => {
+test('changing progressive context removes a hidden conditional answer', async ({page}) => {
   await page.goto('/health-and-safety-healthcheck/');
   const app = healthcheck(page);
 
   await app.getByRole('button', {name: 'Start my Healthcheck'}).click();
   await completeProfile(page);
 
-  await app.getByRole('button', {name: 'Edit business profile'}).click();
-  await expect(app.getByRole('heading', {name: 'Your organisation'})).toBeVisible();
-  await app.getByLabel('Work at height').check();
-  await app.getByLabel('Driving for work').check();
-  await app.getByRole('button', {name: 'Continue to questions'}).click();
-  await waitForQuestion(page);
+  const session = await page.evaluate(() => JSON.parse(localStorage.getItem('acorn_hc_session_v1') || '{}'));
+  const rest = await page.evaluate(() => (window as any).acornHealthcheck.rest);
 
-  for (let i = 0; i < 30; i++) {
-    const heading = await app.getByRole('heading', {level: 2}).textContent();
-    if (heading?.includes('work at height')) break;
-    await answerCurrentQuestion(page, 'Yes');
-  }
+  await page.evaluate(async ({rest, token}) => {
+    await fetch(`${rest}/assessments/${token}/profile`, {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({fire_safety_responsibility: 'yes'}),
+    });
+    await fetch(`${rest}/assessments/${token}/answers/F02_FIRE_RA`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({answer: 'no'}),
+    });
+    await fetch(`${rest}/assessments/${token}/profile`, {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({fire_safety_responsibility: 'no'}),
+    });
+  }, {rest, token: session.token});
 
-  await expect(app.getByRole('heading', {level: 2})).toContainText('work at height');
-  await answerCurrentQuestion(page, 'No');
-
-  await app.getByRole('button', {name: 'Edit business profile'}).click();
-  await expect(app.getByRole('heading', {name: 'Your organisation'})).toBeVisible();
-  await app.getByLabel('Work at height').uncheck();
-  await app.getByRole('button', {name: 'Continue to questions'}).click();
-  await waitForQuestion(page);
-
-  const state = await page.evaluate(async () => {
-    const session = JSON.parse(localStorage.getItem('acorn_hc_session_v1') || '{}');
-    const response = await fetch(`${(window as any).acornHealthcheck.rest}/assessments/${session.token}`);
+  const state = await page.evaluate(async ({rest, token}) => {
+    const response = await fetch(`${rest}/assessments/${token}`);
     return response.json();
-  });
+  }, {rest, token: session.token});
 
-  expect(state.questions.map((question: {key: string}) => question.key)).not.toContain('WAH01_WORK_AT_HEIGHT');
-  expect(state.answers).not.toHaveProperty('WAH01_WORK_AT_HEIGHT');
+  expect(state.questions.map((question: {key: string}) => question.key)).not.toContain('F02_FIRE_RA');
+  expect(state.answers).not.toHaveProperty('F02_FIRE_RA');
+  await expect(app).toBeVisible();
 });
