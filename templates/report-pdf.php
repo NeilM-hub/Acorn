@@ -222,13 +222,13 @@ a{color:inherit}
 <div class="eyebrow" style="color:#d6eafa">How Acorn Safety Services can help</div>
 <h2><?php echo esc_html($report['support']['heading']);?></h2>
 <p><?php echo esc_html($report['support']['body']);?></p>
-<div class="authority-box">
+<?php if(!empty($report['support']['authority_heading'])):?><div class="authority-box">
 <h3><?php echo esc_html($report['support']['authority_heading']);?></h3>
-<p><?php echo esc_html($report['support']['authority_intro']);?></p>
-<table class="authority-list"><tr>
-<?php foreach(($report['support']['authority_points'] ?? []) as $point):?><td><strong><?php echo esc_html($point['title']);?></strong><p><?php echo esc_html($point['body']);?></p></td><?php endforeach;?>
-</tr></table>
-</div>
+<?php if(!empty($report['support']['authority_intro'])):?><p><?php echo esc_html($report['support']['authority_intro']);?></p><?php endif;?>
+<?php if(!empty($report['support']['authority_points'])):?><table class="authority-list"><tr>
+<?php foreach($report['support']['authority_points'] as $point):?><td><strong><?php echo esc_html($point['title']);?></strong><p><?php echo esc_html($point['body']);?></p></td><?php endforeach;?>
+</tr></table><?php endif;?>
+</div><?php endif;?>
 <?php if(!empty($report['support']['options'] ?? [])):?><table class="support-options">
 <?php foreach(array_chunk(($report['support']['options'] ?? []),2) as $row):?><tr>
 <?php foreach($row as $option):?><td><strong><?php echo esc_html($option['label']);?></strong><p><?php echo esc_html($option['body']);?></p></td><?php endforeach;?>
