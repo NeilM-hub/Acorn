@@ -122,6 +122,21 @@ final class ExecutiveReportTest extends IntegrationTestCase
             implode(' ', array_column($report['review'], 'display_action'))
         );
 
+        self::assertSame(
+            ['Tackle priority actions first', 'Give each action an owner', 'Work through the review items', 'Keep the plan live'],
+            array_column($report['next_steps'], 'title')
+        );
+        self::assertNotEmpty($report['priority'][0]['display_acorn_help']);
+
+        $supportLabels = array_column($report['support']['options'], 'label');
+        self::assertContains('Health & Safety support', $supportLabels);
+        self::assertContains('Fire safety', $supportLabels);
+        self::assertContains('Legionella', $supportLabels);
+        self::assertContains('Asbestos', $supportLabels);
+        self::assertSame('Request a free Health & Safety Compliance Audit', $report['support']['cta_label']);
+        self::assertSame('Talk to us about ongoing Health & Safety support', $report['support']['secondary_cta_label']);
+        self::assertStringStartsWith('tel:', $report['support']['secondary_cta_url']);
+
         ob_start();
         require dirname(__DIR__, 2) . '/templates/report-pdf.php';
         $pdfHtml = (string) ob_get_clean();
@@ -130,6 +145,10 @@ final class ExecutiveReportTest extends IntegrationTestCase
         self::assertStringContainsString('Do this next', $pdfHtml);
         self::assertStringContainsString('Suggested owner', $pdfHtml);
         self::assertStringContainsString('Prepared by Acorn Safety Services', $pdfHtml);
+        self::assertStringContainsString('How Acorn can help', $pdfHtml);
+        self::assertStringContainsString('What should you do next?', $pdfHtml);
+        self::assertStringContainsString('How Acorn Safety Services can help', $pdfHtml);
+        self::assertStringContainsString('Talk to us about ongoing Health &amp; Safety support', $pdfHtml);
         self::assertStringNotContainsString('section-break', $pdfHtml);
 
         $data = $report;
