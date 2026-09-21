@@ -86,7 +86,9 @@ test('initial tailoring asks only jurisdiction and employee count', async ({page
 test('Acorn Safety blue is the primary assessment accent', async ({page}) => {
   await page.goto('/health-and-safety-healthcheck/');
   const app = healthcheck(page);
-  const button = app.getByRole('button', {name: /Start my.*Healthcheck/}).first();
+
+  await app.getByRole('button', {name: /Start my.*Healthcheck/}).first().click();
+  const button = app.getByRole('button', {name: 'Start the questions'});
   await expect(button).toHaveCSS('background-color', 'rgb(8, 78, 135)');
 });
 
