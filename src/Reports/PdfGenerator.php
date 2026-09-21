@@ -25,14 +25,24 @@ final class PdfGenerator
         $pdf->setPaper('A4');
         $pdf->render();
 
-        $path = $this->attachmentPath($data);
-        $path = apply_filters('acorn_hc_pdf_temp_path', $path, $data);
+        $generatedPath = $this->attachmentPath($data);
+        $path = apply_filters('acorn_hc_pdf_temp_path', $generatedPath, $data);
 
-        if (!$path || !is_string($path) || file_put_contents($path, $pdf->output()) === false) {
-            if (is_string($path)) {
-                $this->cleanup($path);
+        if (!$path || !is_string($path)) {
+            $this->cleanup($generatedPath);
+            throw new RuntimeException('Could not create PDF.');
+        }
+
+        if (file_put_contents($path, $pdf->output()) === false) {
+            $this->cleanup($path);
+            if ($path !== $generatedPath) {
+                $this->cleanup($generatedPath);
             }
             throw new RuntimeException('Could not create PDF.');
+        }
+
+        if ($path !== $generatedPath) {
+            $this->cleanup($generatedPath);
         }
 
         return $path;
