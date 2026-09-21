@@ -156,12 +156,28 @@ final class ReportDataBuilder
             'disclaimer' => 'This Healthcheck is based on information supplied through an online self-assessment. It highlights areas that may merit attention and does not constitute a formal audit, legal advice or confirmation of compliance.',
             'privacy_policy_url' => $settings['privacy_policy_url'],
             'support' => [
-                'heading' => 'Want help turning this into an action plan?',
-                'body' => 'Acorn Safety Services can review the areas highlighted in your Healthcheck, help you confirm the gaps and turn the findings into a practical action plan.',
+                'heading' => "Don't leave the gaps sitting on a page.",
+                'body' => 'Knowing what needs attention is only the first step. Acorn Safety Services brings specialist Health & Safety, Fire Safety, Legionella and Asbestos support together so you can move from identified gaps to clear actions, evidence and ongoing control.',
+                'authority_heading' => 'One specialist team. Four critical compliance disciplines.',
+                'authority_intro' => 'Instead of coordinating separate advisers, you can use one team to help review the issues, prioritise what matters and support the work through to completion.',
+                'authority_points' => [
+                    [
+                        'title' => 'Specialist advice, practical delivery',
+                        'body' => 'We do more than identify gaps. We help turn them into proportionate, workable actions that fit the way your organisation operates.',
+                    ],
+                    [
+                        'title' => 'One team across the key risk areas',
+                        'body' => 'Health & Safety, Fire Safety, Legionella and Asbestos support can be coordinated through Acorn rather than managed in isolation.',
+                    ],
+                    [
+                        'title' => 'From finding to evidence',
+                        'body' => 'We can help you review the issue, put the right arrangements in place and leave you with a clearer record of what has been done.',
+                    ],
+                ],
                 'options' => $supportOptions,
                 'cta_label' => 'Request a free Health & Safety Compliance Audit',
                 'cta_url' => $settings['audit_cta_url'],
-                'secondary_cta_label' => 'Talk to us about ongoing Health & Safety support',
+                'secondary_cta_label' => 'Speak to an Acorn specialist',
                 'secondary_cta_url' => 'tel:' . preg_replace('/[^0-9+]/', '', (string) $settings['report_contact_phone']),
             ],
         ];
