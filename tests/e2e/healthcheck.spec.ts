@@ -1,5 +1,5 @@
 import {test, expect} from '@playwright/test';
-import {completeProfile, healthcheck, progressToResults} from './helpers';
+import {answerCurrentQuestion, completeProfile, healthcheck, progressToResults} from './helpers';
 
 test('visitor completes simplified guided Healthcheck and reaches report', async ({page}) => {
   await page.goto('/health-and-safety-healthcheck/');
@@ -89,3 +89,44 @@ test('desktop question screens use the available assessment width', async ({page
   expect(headingBox?.width ?? 0).toBeGreaterThan(700);
 });
 
+
+
+test('single-choice routing questions auto-advance without a Continue button', async ({page}) => {
+  await page.goto('/health-and-safety-healthcheck/');
+  const app = healthcheck(page);
+
+  await app.getByRole('button', {name: 'Start my Healthcheck'}).click();
+  await completeProfile(page, '10–49');
+
+  for (let i = 0; i < 9; i++) {
+    await answerCurrentQuestion(page, 'Yes');
+  }
+
+  await expect(app.getByRole('heading', {name: 'Are you responsible, fully or partly, for fire safety at any workplace or premises?'})).toBeVisible();
+  await expect(app.getByRole('button', {name: 'Continue'})).not.toBeVisible();
+
+  await app.getByLabel('No', {exact: true}).check();
+
+  await expect(app.getByRole('heading', {name: "Are you responsible, fully or partly, for the building's hot and cold water systems?"})).toBeVisible();
+  await expect(app.getByRole('button', {name: 'Continue'})).not.toBeVisible();
+});
+
+test('secure report opens with an authority-led action hero', async ({page}) => {
+  await page.goto('/health-and-safety-healthcheck/');
+  const app = healthcheck(page);
+
+  await app.getByRole('button', {name: 'Start my Healthcheck'}).click();
+  await completeProfile(page);
+  await progressToResults(page, 'No');
+
+  await app.getByLabel('First name').fill('Authority');
+  await app.getByLabel('Last name').fill('Tester');
+  await app.getByLabel('Company').fill('Authority Test Ltd');
+  await app.getByLabel('Work email').fill('authority@example.test');
+  await app.getByRole('button', {name: 'View my full action plan'}).click();
+
+  const report = page.locator('.acorn-hc__report');
+  await expect(report.locator('.acorn-hc__report-hero--authority')).toBeVisible();
+  await expect(report.getByRole('heading', {name: 'Your Healthcheck is complete. Now turn the findings into action.'})).toBeVisible();
+  await expect(report.getByText('Specialist guidance across Health & Safety, Fire Safety, Legionella and Asbestos.')).toBeVisible();
+});
