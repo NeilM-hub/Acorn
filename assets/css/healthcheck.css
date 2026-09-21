@@ -523,7 +523,7 @@
 }
 
 .acorn-hc__app {
-  max-width: 52rem;
+  max-width: 60rem;
   margin: 0 auto;
 }
 
@@ -616,7 +616,14 @@
   box-shadow: 0 0 0 3px rgba(8,78,135,.10);
 }
 
-.acorn-hc__question-wrap > h2,
+.acorn-hc__question-wrap > h2 {
+  max-width: 30ch;
+  margin: 0 0 1rem;
+  font-size: clamp(1.9rem,4vw,3rem);
+  line-height: 1.12;
+  letter-spacing: -.025em;
+}
+
 .acorn-hc__results > h2 {
   max-width: 22ch;
   margin: 0 0 1rem;
