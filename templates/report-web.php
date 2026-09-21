@@ -11,10 +11,10 @@
 <main class="acorn-hc acorn-hc__report acorn-hc__report--executive" data-resend-url="<?php echo esc_url($resendUrl); ?>">
 <header class="acorn-hc__report-hero">
 <?php if($report['branding']['logo_url']):?><img class="acorn-hc__report-logo" src="<?php echo esc_url($report['branding']['logo_url']);?>" alt="Acorn Safety Services"><?php endif;?>
-<p class="acorn-hc__eyebrow">Acorn Safety Services</p>
+<p class="acorn-hc__eyebrow">Health &amp; Safety Healthcheck</p>
 <h1>Your Health &amp; Safety Healthcheck</h1>
 <p class="acorn-hc__report-intro">A practical snapshot of what's working, what needs attention and what to do next.</p>
-<p><strong><?php echo esc_html($report['meta']['company']); ?></strong> | <?php echo esc_html($report['meta']['assessment_date']); ?></p>
+<div class="acorn-hc__report-meta"><strong><?php echo esc_html($report['meta']['company']); ?></strong><span><?php echo esc_html($report['meta']['assessment_date']); ?></span><span>Prepared by Acorn Safety Services</span></div>
 </header>
 
 <section>
@@ -28,6 +28,20 @@
 <div><strong><?php echo (int)$report['summary']['review_count']; ?></strong><span><?php echo esc_html($report['executive']['review_label']); ?></span></div>
 <div><strong><?php echo (int)$report['summary']['addressed_count']; ?></strong><span><?php echo esc_html($report['executive']['addressed_label']); ?></span></div>
 </div>
+
+<?php if($report['executive']['top_actions']):?>
+<div class="acorn-hc__top-actions">
+<p class="acorn-hc__eyebrow">What needs your attention first</p>
+<?php foreach($report['executive']['top_actions'] as $index=>$item):?>
+<article>
+<span class="acorn-hc__top-number"><?php echo (int)$index+1;?></span>
+<div><h3><?php echo esc_html($item['display_heading']);?></h3><p><?php echo esc_html($item['display_action']);?></p></div>
+<span class="acorn-hc__status acorn-hc__status--<?php echo esc_attr($item['finding_status']);?>"><?php echo esc_html($item['finding_status']==='priority'?'Priority action':'Review recommended');?></span>
+</article>
+<?php endforeach;?>
+</div>
+<?php endif;?>
+
 <div class="acorn-hc__pillar-grid">
 <?php foreach($report['pillars'] as $pillar):?>
 <div class="acorn-hc__pillar-card"><strong><?php echo esc_html($pillar['label']);?></strong><span class="acorn-hc__status acorn-hc__status--<?php echo esc_attr($pillar['status']);?>"><?php echo esc_html($pillar['display_status']);?></span></div>
@@ -46,10 +60,11 @@
 <div class="acorn-hc__priority-number"><?php echo (int)$index+1;?></div>
 <div>
 <h3><?php echo esc_html($item['display_heading']);?></h3>
-<p><strong>What we found:</strong> <?php echo esc_html($item['display_identified']);?></p>
-<p><strong>What to do next:</strong> <?php echo esc_html($item['display_action']);?></p>
-<?php if(!empty($item['display_why'])):?><p class="acorn-hc__muted"><strong>Why it matters:</strong> <?php echo esc_html($item['display_why']);?></p><?php endif;?>
-<?php if(!empty($item['display_good_looks'])):?><p class="acorn-hc__muted"><strong>What good looks like:</strong> <?php echo esc_html($item['display_good_looks']);?></p><?php endif;?>
+<div class="acorn-hc__finding-block"><span>What we found</span><p><?php echo esc_html($item['display_identified']);?></p></div>
+<div class="acorn-hc__finding-block acorn-hc__finding-block--next"><span>Do this next</span><p><?php echo esc_html($item['display_action']);?></p></div>
+<?php if(!empty($item['display_why'])):?><div class="acorn-hc__finding-block"><span>Why it matters</span><p><?php echo esc_html($item['display_why']);?></p></div><?php endif;?>
+<?php if(!empty($item['display_good_looks'])):?><div class="acorn-hc__good-box"><strong>What good looks like:</strong> <?php echo esc_html($item['display_good_looks']);?></div><?php endif;?>
+<div class="acorn-hc__action-meta"><span><strong>Suggested owner:</strong> <?php echo esc_html($item['display_owner']);?></span><span><strong>Suggested priority:</strong> <?php echo esc_html($item['display_priority']);?></span></div>
 </div>
 </article>
 <?php endforeach;?>
@@ -59,7 +74,7 @@
 <section>
 <p class="acorn-hc__eyebrow">Worth checking</p>
 <h2>Other things worth reviewing</h2>
-<p>These are not shown as priority actions, but your answers suggest they are worth checking or confirming.</p>
+<p>These are not priority actions, but your answers suggest they are worth checking or confirming.</p>
 <div class="acorn-hc__review-list">
 <?php if(!$report['review']):?><p>No additional review items were identified.</p><?php endif;?>
 <?php foreach($report['review'] as $item):?>
