@@ -56,7 +56,6 @@ export async function progressToResults(
     if (await gate.isVisible().catch(() => false)) {
       const heading = await app.getByRole('heading', {level: 2}).textContent();
       await gate.getByLabel('No', {exact: true}).check();
-      await gate.getByRole('button', {name: 'Continue'}).click();
       await expect
         .poll(async () => (await app.getByRole('heading', {level: 2}).textContent().catch(() => '')) ?? '', {timeout: 5000})
         .not.toBe(heading ?? '');
