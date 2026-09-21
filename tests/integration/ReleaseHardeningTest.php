@@ -122,7 +122,16 @@ final class ReleaseHardeningTest extends IntegrationTestCase
 
         remove_all_filters('pre_wp_mail');
 
-        self::assertTrue($mail['attachment_exists']);
+        $assessment = (new AssessmentRepository())->findByToken($token);
+        self::assertSame(
+            'generated',
+            $assessment['pdf_status'],
+            'PDF generation failed: ' . (string) ($assessment['pdf_last_error'] ?? '')
+        );
+        self::assertTrue(
+            $mail['attachment_exists'],
+            'Customer mail did not receive the generated PDF attachment.'
+        );
         self::assertSame('Acorn-Safety-Healthcheck-Example-Company-Ltd.pdf', $mail['attachment_basename']);
         self::assertSame('%PDF-', $mail['attachment_header']);
     }
