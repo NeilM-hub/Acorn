@@ -39,19 +39,154 @@ if(root){
 
  function landing(resume=false){
   currentStep={type:'landing'};
+  const primaryAction=resume
+   ? '<button class="acorn-hc__primary acorn-hc__landing-primary" data-action="continue">Continue Healthcheck</button>'
+   : '<button class="acorn-hc__primary acorn-hc__landing-primary" data-action="start">Start my free Healthcheck</button>';
+  const repeatAction=resume
+   ? '<button class="acorn-hc__primary" data-action="continue">Continue Healthcheck</button>'
+   : '<button class="acorn-hc__primary" data-action="start">Start my free Healthcheck</button>';
+
   app().innerHTML=`
-   <div class="acorn-hc__hero">
-    <span class="acorn-hc__eyebrow">Free Health &amp; Safety Healthcheck</span>
-    <h1>Find the gaps.<br>Know what to do next.</h1>
-    <p class="acorn-hc__hero-copy">Answer a few straightforward questions and get a practical snapshot of what looks good, what may need attention and what to do next.</p>
-    <div class="acorn-hc__topic-chips" aria-label="Topics covered">
-      <span>Health &amp; Safety</span><span>Fire Safety</span><span>Legionella</span><span>Asbestos</span>
-    </div>
-    <div class="acorn-hc__benefits">
-      <span>✓ Around 3–4 minutes</span><span>✓ No account needed</span><span>✓ Personalised action plan</span><span>✓ Downloadable report</span>
-    </div>
-    <p class="acorn-hc__notice">This is an indicative self-assessment based on the information you provide. It is not a formal audit, legal advice or confirmation of compliance.</p>
-    ${resume?'<div class="acorn-hc__actions"><button class="acorn-hc__primary" data-action="continue">Continue Healthcheck</button><button class="acorn-hc__secondary" data-action="restart">Start again</button></div>':'<button class="acorn-hc__primary acorn-hc__hero-cta" data-action="start">Start my Healthcheck</button>'}
+   <div class="acorn-hc__landing">
+    <section class="acorn-hc__landing-hero">
+      <div class="acorn-hc__landing-hero-top">
+        <img class="acorn-hc__landing-logo" src="https://acornhealthandsafety.co.uk/wp-content/uploads/2019/04/Final-Small.png" alt="Acorn Safety Services">
+        <span class="acorn-hc__landing-badge">Free Health &amp; Safety Healthcheck</span>
+      </div>
+      <div class="acorn-hc__landing-hero-grid">
+        <div>
+          <h1>Find the gaps.<br>Know what to do next.</h1>
+          <p class="acorn-hc__landing-lead">In around 3–4 minutes, get a practical snapshot of your Health &amp; Safety, Fire Safety, Legionella and Asbestos arrangements — with clear actions showing what may need attention.</p>
+          <div class="acorn-hc__landing-actions">
+            ${primaryAction}
+            ${resume?'<button class="acorn-hc__secondary acorn-hc__secondary--light" data-action="restart">Start again</button>':''}
+          </div>
+          <p class="acorn-hc__landing-micro">Free <span>•</span> No account needed <span>•</span> Instant results <span>•</span> Downloadable action plan</p>
+        </div>
+        <div class="acorn-hc__landing-hero-card" aria-label="What the Healthcheck covers">
+          <span>Health &amp; Safety</span>
+          <span>Fire Safety</span>
+          <span>Legionella</span>
+          <span>Asbestos</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="acorn-hc__landing-authority">
+      <p class="acorn-hc__eyebrow">Built by specialists</p>
+      <h2>One specialist team. Four critical compliance disciplines.</h2>
+      <p>Acorn Safety Services helps organisations understand and manage Health &amp; Safety, Fire Safety, Legionella and Asbestos risks through practical advice, assessments and ongoing support.</p>
+    </section>
+
+    <section class="acorn-hc__landing-section">
+      <div class="acorn-hc__landing-section-head">
+        <p class="acorn-hc__eyebrow">What you get</p>
+        <h2>More than a checklist</h2>
+        <p>The Healthcheck is designed to help you quickly understand where your current arrangements appear strong and where further attention may be worthwhile.</p>
+      </div>
+      <div class="acorn-hc__landing-card-grid">
+        <article><span class="acorn-hc__landing-card-number">01</span><h3>Your priority actions</h3><p>See the areas that may need attention first.</p></article>
+        <article><span class="acorn-hc__landing-card-number">02</span><h3>Areas worth reviewing</h3><p>Identify arrangements that may need checking or confirming.</p></article>
+        <article><span class="acorn-hc__landing-card-number">03</span><h3>What looks good</h3><p>See where your answers did not identify an obvious gap.</p></article>
+        <article><span class="acorn-hc__landing-card-number">04</span><h3>A practical action plan</h3><p>Get clear next steps, guidance and a downloadable report.</p></article>
+      </div>
+      <div class="acorn-hc__landing-center-cta">${repeatAction}</div>
+    </section>
+
+    <section class="acorn-hc__landing-section acorn-hc__landing-section--soft">
+      <div class="acorn-hc__landing-section-head">
+        <p class="acorn-hc__eyebrow">How it works</p>
+        <h2>A clearer picture in a few minutes</h2>
+      </div>
+      <div class="acorn-hc__landing-steps">
+        <article><span>01</span><div><h3>Answer straightforward questions</h3><p>No jargon-heavy audit forms. We only show checks relevant to your organisation.</p></div></article>
+        <article><span>02</span><div><h3>See where things stand</h3><p>Your results are grouped into priority actions, areas worth reviewing and areas looking good.</p></div></article>
+        <article><span>03</span><div><h3>Know what to do next</h3><p>Receive practical guidance and a downloadable Healthcheck report you can use as an action plan.</p></div></article>
+      </div>
+    </section>
+
+    <section class="acorn-hc__landing-section">
+      <div class="acorn-hc__landing-section-head">
+        <p class="acorn-hc__eyebrow">Four areas. One joined-up view.</p>
+        <h2>The Healthcheck looks across the areas businesses often need to manage together</h2>
+      </div>
+      <div class="acorn-hc__landing-expertise">
+        <article><div class="acorn-hc__landing-expertise-mark">H&amp;S</div><h3>Health &amp; Safety</h3><p>Competent support, policies, risk assessments, training, first aid, incident management and workplace arrangements.</p></article>
+        <article><div class="acorn-hc__landing-expertise-mark">F</div><h3>Fire Safety</h3><p>Fire Risk Assessments, emergency arrangements and the management of fire precautions.</p></article>
+        <article><div class="acorn-hc__landing-expertise-mark">L</div><h3>Legionella</h3><p>Responsibility for water systems, risk assessment and appropriate control arrangements.</p></article>
+        <article><div class="acorn-hc__landing-expertise-mark">A</div><h3>Asbestos</h3><p>Existing asbestos information, management responsibilities and arrangements for older non-domestic buildings.</p></article>
+      </div>
+    </section>
+
+    <section class="acorn-hc__landing-section acorn-hc__landing-insight">
+      <div>
+        <p class="acorn-hc__eyebrow">Why take the Healthcheck?</p>
+        <h2>Problems are easier to deal with when you can see them clearly.</h2>
+        <p>Health &amp; Safety problems are often not caused by businesses doing nothing. More commonly, responsibilities are unclear, documents have become outdated, actions have not been followed through, or nobody is quite sure whether an arrangement still meets the organisation’s needs.</p>
+        <p>The Acorn Healthcheck gives you a structured way to step back and look at the important areas together.</p>
+      </div>
+      <aside>
+        <strong>You don’t need to know every answer before you start.</strong>
+        <p>“Not sure” is a perfectly valid answer — and often one of the most useful. We’ll flag the area for review rather than forcing you to guess.</p>
+      </aside>
+    </section>
+
+    <section class="acorn-hc__landing-section acorn-hc__landing-preview">
+      <div class="acorn-hc__landing-section-head">
+        <p class="acorn-hc__eyebrow">A useful result, not just a score</p>
+        <h2>See exactly where to focus</h2>
+        <p>Your Healthcheck gives you an immediate view of what may need attention and a practical next step for each issue.</p>
+      </div>
+      <div class="acorn-hc__landing-preview-counts" aria-label="Example Healthcheck result">
+        <div><strong>2</strong><span>Priority actions</span></div>
+        <div><strong>4</strong><span>Worth reviewing</span></div>
+        <div><strong>10</strong><span>Areas looking good</span></div>
+      </div>
+      <article class="acorn-hc__landing-preview-card">
+        <p class="acorn-hc__eyebrow">Example first priority</p>
+        <h3>Fire Risk Assessment</h3>
+        <p>Your answers suggest that the current Fire Risk Assessment may need attention.</p>
+        <div><strong>Do this next</strong><span>Confirm that a suitable and current assessment is in place and that identified actions are being managed.</span></div>
+      </article>
+    </section>
+
+    <section class="acorn-hc__landing-support">
+      <p class="acorn-hc__eyebrow">How Acorn Safety Services can help</p>
+      <h2>Knowing the gaps is the first step. Fixing them is what matters.</h2>
+      <p class="acorn-hc__landing-support-lead">If your Healthcheck identifies something that needs attention, you don’t have to work out the next step alone. Acorn Safety Services can help you review the issue, confirm what is required and put practical arrangements in place.</p>
+      <div class="acorn-hc__landing-support-grid">
+        <article><h3>Health &amp; Safety support</h3><p>Competent-person support, policies, assessments, training and ongoing advice.</p></article>
+        <article><h3>Fire Safety</h3><p>Fire Risk Assessments and support addressing identified actions.</p></article>
+        <article><h3>Legionella</h3><p>Risk assessments and practical monitoring and control support.</p></article>
+        <article><h3>Asbestos</h3><p>Surveys, management arrangements and specialist asbestos support.</p></article>
+      </div>
+      <div class="acorn-hc__landing-support-actions">
+        ${repeatAction}
+        <a class="acorn-hc__landing-outline-link" href="https://acornhealthandsafety.co.uk/health-and-safety-compliance-audit/">Request a free Compliance Audit</a>
+      </div>
+    </section>
+
+    <section class="acorn-hc__landing-section acorn-hc__landing-faq">
+      <div class="acorn-hc__landing-section-head">
+        <p class="acorn-hc__eyebrow">Before you start</p>
+        <h2>Frequently asked questions</h2>
+      </div>
+      <details><summary>How long does it take?</summary><p>Most businesses should complete the Healthcheck in around 3–4 minutes.</p></details>
+      <details><summary>Do I need to create an account?</summary><p>No. You can complete the Healthcheck without creating an account.</p></details>
+      <details><summary>What happens to my answers?</summary><p>Your answers are used to prepare your personalised results and Healthcheck report.</p></details>
+      <details><summary>Is this a formal Health &amp; Safety audit?</summary><p>No. It is an indicative self-assessment designed to highlight areas that may merit attention. It is not legal advice or confirmation of compliance.</p></details>
+      <details><summary>What if I don’t know an answer?</summary><p>Select “Not sure”. The Healthcheck will flag the area for review rather than forcing you to guess.</p></details>
+    </section>
+
+    <section class="acorn-hc__landing-final">
+      <p class="acorn-hc__eyebrow">Free Health &amp; Safety Healthcheck</p>
+      <h2>Ready to see where things stand?</h2>
+      <p>Take the free Acorn Health &amp; Safety Healthcheck and leave with a clearer picture of what looks good, what may need attention and what to do next.</p>
+      ${repeatAction}
+      <p class="acorn-hc__landing-final-micro">Around 3–4 minutes <span>•</span> No account required <span>•</span> Personalised action plan</p>
+    </section>
+
+    <p class="acorn-hc__landing-disclaimer">This is an indicative self-assessment based on the information you provide. It is not a formal audit, legal advice or confirmation of compliance.</p>
    </div>`;
  }
 
