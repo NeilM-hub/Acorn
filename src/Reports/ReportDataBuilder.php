@@ -35,12 +35,16 @@ final class ReportDataBuilder
             get_option('acorn_hc_settings', [])
         );
 
-        $logoId = (int) $settings['report_logo_attachment_id'];
+        $logoId = (int) ($settings['report_logo_attachment_id'] ?? 0);
         $logoPath = $logoId ? get_attached_file($logoId) : false;
         $logoData = '';
+        $logoUrl = $logoId ? (string) wp_get_attachment_image_url($logoId, 'full') : (string) ($settings['report_logo_url'] ?? '');
+
         if ($logoPath && is_readable($logoPath)) {
             $mime = mime_content_type($logoPath) ?: 'image/png';
             $logoData = 'data:' . $mime . ';base64,' . base64_encode((string) file_get_contents($logoPath));
+        } elseif ($logoUrl !== '') {
+            $logoData = $this->remoteImageData($logoUrl);
         }
 
         $groups = ['addressed' => [], 'review' => [], 'priority' => []];
@@ -87,6 +91,11 @@ final class ReportDataBuilder
         }
 
         $summary = $snapshot['summary'];
+        $topActions = array_slice(
+            $groups['priority'] ?: $groups['review'],
+            0,
+            3
+        );
 
         return [
             'meta' => [
@@ -97,8 +106,9 @@ final class ReportDataBuilder
                 'areas_assessed' => array_sum(array_map('count', $groups)),
             ],
             'branding' => [
-                'logo_url' => $logoId ? (string) wp_get_attachment_image_url($logoId, 'full') : '',
+                'logo_url' => $logoUrl,
                 'logo_data' => $logoData,
+                'horizontal_logo_url' => (string) ($settings['report_horizontal_logo_url'] ?? ''),
                 'phone' => $settings['report_contact_phone'],
                 'website' => $settings['report_website'],
                 'pdf_footer' => $settings['pdf_footer'],
@@ -109,6 +119,7 @@ final class ReportDataBuilder
                 'priority_label' => $summary['priority_count'] === 1 ? 'Priority action' : 'Priority actions',
                 'review_label' => $summary['review_count'] === 1 ? 'Review recommended' : 'Reviews recommended',
                 'addressed_label' => $summary['addressed_count'] === 1 ? 'Area looking good' : 'Areas looking good',
+                'top_actions' => $topActions,
             ],
             'pillars' => $pillars,
             'sections' => [
@@ -141,17 +152,55 @@ final class ReportDataBuilder
             );
             $finding['display_heading'] = ucfirst(trim((string) $heading));
             $finding['display_action'] = '';
+            $finding['display_owner'] = '';
+            $finding['display_priority'] = '';
             return $finding;
         }
 
         $recommendation = $finding['recommendation'] ?? [];
+        $action = (string) ($recommendation['next_step_text'] ?? '');
+        $action = preg_replace('/^Confirm the current position and who is responsible\.\s*Then:\s*/i', '', $action);
+        $action = preg_replace('/^Confirm the current position and who is responsible\.\s*/i', '', (string) $action);
+
         $finding['display_heading'] = (string) ($recommendation['heading'] ?? '');
-        $finding['display_action'] = (string) ($recommendation['next_step_text'] ?? '');
+        $finding['display_action'] = trim((string) $action);
         $finding['display_identified'] = (string) ($recommendation['identified_text'] ?? '');
         $finding['display_why'] = (string) ($recommendation['why_text'] ?? '');
         $finding['display_good_looks'] = (string) ($recommendation['good_looks_text'] ?? '');
+        $finding['display_owner'] = $this->ownerLabel((string) ($finding['module_key'] ?? ''));
+        $finding['display_priority'] = $finding['finding_status'] === 'priority' ? 'Address first' : 'Review and confirm';
 
         return $finding;
+    }
+
+    private function ownerLabel(string $module): string
+    {
+        return match ($module) {
+            'fire' => 'Responsible person / premises management',
+            'legionella' => 'Premises / water-system responsible person',
+            'asbestos' => 'Dutyholder / premises management',
+            'people', 'incidents' => 'Management / HR',
+            'workplace', 'specialist' => 'Management / responsible manager',
+            default => 'Management',
+        };
+    }
+
+    private function remoteImageData(string $url): string
+    {
+        $response = wp_remote_get($url, ['timeout' => 4, 'redirection' => 2]);
+        if (is_wp_error($response)) {
+            return '';
+        }
+
+        $body = (string) wp_remote_retrieve_body($response);
+        if ($body === '') {
+            return '';
+        }
+
+        $contentType = (string) wp_remote_retrieve_header($response, 'content-type');
+        $mime = str_starts_with($contentType, 'image/') ? explode(';', $contentType)[0] : 'image/png';
+
+        return 'data:' . $mime . ';base64,' . base64_encode($body);
     }
 
     private function statusLabel(string $status): string
