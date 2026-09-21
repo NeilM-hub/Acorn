@@ -213,6 +213,8 @@ final class ExecutiveReportTest extends IntegrationTestCase
 
         self::assertStringContainsString('class="pillar-wide"', $pdfHtml);
         self::assertStringNotContainsString('class="pillar-empty"', $pdfHtml);
+        self::assertStringNotContainsString('Your priority action plan', $pdfHtml);
+        self::assertStringNotContainsString('Other things worth reviewing', $pdfHtml);
         self::assertStringContainsString('class="support support--full-page"', $pdfHtml);
     }
 
