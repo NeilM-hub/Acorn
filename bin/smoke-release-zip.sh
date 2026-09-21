@@ -2,7 +2,7 @@
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
-archive="${1:-$root/dist/acorn-safety-healthcheck-1.2.3.zip}"
+archive="${1:-$root/dist/acorn-safety-healthcheck-1.2.4.zip}"
 smoke="$root/.release-smoke"
 wp_env="$root/node_modules/.bin/wp-env"
 base_url="http://localhost:8890"
