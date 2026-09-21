@@ -31,7 +31,7 @@ test('visitor completes simplified guided Healthcheck and reaches report', async
   await app.getByLabel('Work email').fill('ada@example.test');
   await app.getByRole('button', {name: 'View my full action plan'}).click();
 
-  await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: 'Your Health & Safety Healthcheck'})).toBeVisible();
+  await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: 'Your Healthcheck is complete. Now turn the findings into action.'})).toBeVisible();
   await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: "What you're already doing well"})).toBeVisible();
 });
 
