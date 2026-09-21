@@ -72,3 +72,20 @@ test('resume landing gives Start again a subdued secondary treatment', async ({p
   const restart = app.getByRole('button', {name: 'Start again'});
   await expect(restart).toHaveClass(/acorn-hc__secondary/);
 });
+
+test('desktop question screens use the available assessment width', async ({page}) => {
+  await page.goto('/health-and-safety-healthcheck/');
+  const app = healthcheck(page);
+
+  await app.getByRole('button', {name: 'Start my Healthcheck'}).click();
+  await completeProfile(page, '10–49');
+
+  const wrap = app.locator('.acorn-hc__question-wrap');
+  const wrapBox = await wrap.boundingBox();
+  expect(wrapBox?.width ?? 0).toBeGreaterThan(880);
+
+  const heading = app.getByRole('heading', {level: 2});
+  const headingBox = await heading.boundingBox();
+  expect(headingBox?.width ?? 0).toBeGreaterThan(700);
+});
+
