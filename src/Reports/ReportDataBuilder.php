@@ -199,14 +199,16 @@ final class ReportDataBuilder
             return '';
         }
 
+        $statusCode = (int) wp_remote_retrieve_response_code($response);
+        $contentType = strtolower((string) wp_remote_retrieve_header($response, 'content-type'));
         $body = (string) wp_remote_retrieve_body($response);
-        if ($body === '') {
+
+        if ($statusCode < 200 || $statusCode >= 300 || $body === '' || !str_starts_with($contentType, 'image/')) {
             set_transient($cacheKey, '__failed__', HOUR_IN_SECONDS);
             return '';
         }
 
-        $contentType = (string) wp_remote_retrieve_header($response, 'content-type');
-        $mime = str_starts_with($contentType, 'image/') ? explode(';', $contentType)[0] : 'image/png';
+        $mime = explode(';', $contentType)[0];
         $data = 'data:' . $mime . ';base64,' . base64_encode($body);
         set_transient($cacheKey, $data, DAY_IN_SECONDS);
 
