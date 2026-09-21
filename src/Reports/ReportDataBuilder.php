@@ -36,15 +36,18 @@ final class ReportDataBuilder
         );
 
         $logoId = (int) ($settings['report_logo_attachment_id'] ?? 0);
+        $defaultLogoUrl = (string) ($settings['report_logo_url'] ?? '');
+        $logoUrl = $logoId ? (string) wp_get_attachment_image_url($logoId, 'full') : $defaultLogoUrl;
+
+        if (!$logoId && $defaultLogoUrl !== '' && function_exists('attachment_url_to_postid')) {
+            $logoId = (int) attachment_url_to_postid($defaultLogoUrl);
+        }
+
         $logoPath = $logoId ? get_attached_file($logoId) : false;
         $logoData = '';
-        $logoUrl = $logoId ? (string) wp_get_attachment_image_url($logoId, 'full') : (string) ($settings['report_logo_url'] ?? '');
-
         if ($logoPath && is_readable($logoPath)) {
             $mime = mime_content_type($logoPath) ?: 'image/png';
             $logoData = 'data:' . $mime . ';base64,' . base64_encode((string) file_get_contents($logoPath));
-        } elseif ($logoUrl !== '') {
-            $logoData = $this->remoteImageData($logoUrl);
         }
 
         $groups = ['addressed' => [], 'review' => [], 'priority' => []];
@@ -183,36 +186,6 @@ final class ReportDataBuilder
             'workplace', 'specialist' => 'Management / responsible manager',
             default => 'Management',
         };
-    }
-
-    private function remoteImageData(string $url): string
-    {
-        $cacheKey = 'acorn_hc_logo_' . md5($url);
-        $cached = get_transient($cacheKey);
-        if (is_string($cached)) {
-            return $cached === '__failed__' ? '' : $cached;
-        }
-
-        $response = wp_remote_get($url, ['timeout' => 2, 'redirection' => 2]);
-        if (is_wp_error($response)) {
-            set_transient($cacheKey, '__failed__', HOUR_IN_SECONDS);
-            return '';
-        }
-
-        $statusCode = (int) wp_remote_retrieve_response_code($response);
-        $contentType = strtolower((string) wp_remote_retrieve_header($response, 'content-type'));
-        $body = (string) wp_remote_retrieve_body($response);
-
-        if ($statusCode < 200 || $statusCode >= 300 || $body === '' || !str_starts_with($contentType, 'image/')) {
-            set_transient($cacheKey, '__failed__', HOUR_IN_SECONDS);
-            return '';
-        }
-
-        $mime = explode(';', $contentType)[0];
-        $data = 'data:' . $mime . ';base64,' . base64_encode($body);
-        set_transient($cacheKey, $data, DAY_IN_SECONDS);
-
-        return $data;
     }
 
     private function statusLabel(string $status): string
