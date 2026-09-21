@@ -87,12 +87,12 @@ jobs:
 
       - name: Verify plugin ZIP
         run: |
-          test -s dist/acorn-safety-healthcheck-1.2.1.zip
-          unzip -t dist/acorn-safety-healthcheck-1.2.1.zip
-          unzip -Z1 dist/acorn-safety-healthcheck-1.2.1.zip | grep -q '^acorn-safety-healthcheck/'
-          unzip -p dist/acorn-safety-healthcheck-1.2.1.zip acorn-safety-healthcheck/acorn-safety-healthcheck.php | grep -q 'Version: 1.2.1'
-          unzip -Z1 dist/acorn-safety-healthcheck-1.2.1.zip | grep -q '^acorn-safety-healthcheck/vendor/autoload.php$'
-          ! unzip -Z1 dist/acorn-safety-healthcheck-1.2.1.zip | grep -E '^acorn-safety-healthcheck/(tests/|docs/|node_modules/|\.github/|phpunit\.xml(\.dist)?$|playwright\.config(\.ts|\.js)?$|package(-lock)?\.json$|\.wp-env(\.json)?$)'
+          test -s dist/acorn-safety-healthcheck-1.2.2.zip
+          unzip -t dist/acorn-safety-healthcheck-1.2.2.zip
+          unzip -Z1 dist/acorn-safety-healthcheck-1.2.2.zip | grep -q '^acorn-safety-healthcheck/'
+          unzip -p dist/acorn-safety-healthcheck-1.2.2.zip acorn-safety-healthcheck/acorn-safety-healthcheck.php | grep -q 'Version: 1.2.2'
+          unzip -Z1 dist/acorn-safety-healthcheck-1.2.2.zip | grep -q '^acorn-safety-healthcheck/vendor/autoload.php$'
+          ! unzip -Z1 dist/acorn-safety-healthcheck-1.2.2.zip | grep -E '^acorn-safety-healthcheck/(tests/|docs/|node_modules/|\.github/|phpunit\.xml(\.dist)?$|playwright\.config(\.ts|\.js)?$|package(-lock)?\.json$|\.wp-env(\.json)?$)'
 
       - name: Run clean release ZIP smoke test
         run: bash bin/smoke-release-zip.sh
@@ -101,8 +101,8 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: acorn-safety-healthcheck-1.2.1
-          path: dist/acorn-safety-healthcheck-1.2.1.zip
+          name: acorn-safety-healthcheck-1.2.2
+          path: dist/acorn-safety-healthcheck-1.2.2.zip
           if-no-files-found: error
 
       - name: Upload browser diagnostics
