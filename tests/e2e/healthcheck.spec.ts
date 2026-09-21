@@ -1,31 +1,35 @@
 import {test, expect} from '@playwright/test';
-import {answerCurrentQuestion, completeProfile, healthcheck} from './helpers';
+import {completeProfile, healthcheck, progressToResults} from './helpers';
 
-test('visitor completes profile, relevant questions, headline gate and contact capture', async ({page}) => {
+test('visitor completes simplified guided Healthcheck and reaches report', async ({page}) => {
   await page.goto('/health-and-safety-healthcheck/');
   const app = healthcheck(page);
 
   await expect(app.getByLabel('Work email')).not.toBeVisible();
+  await expect(app.getByRole('heading', {level: 1})).toContainText('Find the gaps.');
+
   await app.getByRole('button', {name: 'Start my Healthcheck'}).click();
-  await completeProfile(page);
-  await expect(app.getByRole('heading', {level: 2})).toHaveText('Do you have competent health and safety support in place?');
+  await expect(app.getByRole('heading', {name: 'A couple of details so we can tailor the Healthcheck'})).toBeVisible();
 
-  for (let i = 0; i < 30; i++) {
-    if (await app.getByRole('heading', {name: 'Your Healthcheck is complete'}).isVisible().catch(() => false)) break;
-    await answerCurrentQuestion(page, 'Yes');
-  }
+  await completeProfile(page, '1–4');
+  await expect(app.getByRole('heading', {level: 2})).toHaveText('Do you have someone competent helping you manage health and safety?');
+  await expect(app.locator('.acorn-hc__stage-rail span')).toHaveCount(5);
 
-  await expect(app.getByRole('heading', {name: 'Your Healthcheck is complete'})).toBeVisible();
-  await expect(app.getByText('Here is your Healthcheck snapshot.')).toBeVisible();
-  await expect(app.getByText('Enter your details to view the full action plan and download your report.')).toBeVisible();
+  const help = app.getByRole('button', {name: /What does this mean/});
+  await help.click();
+  await expect(app.getByText('What good looks like', {exact: true})).toBeVisible();
+
+  await progressToResults(page, 'Yes');
+
+  await expect(app.getByRole('heading', {name: "Here's where things stand"})).toBeVisible();
   await expect(app.locator('.acorn-hc__headline-counts > div')).toHaveCount(3);
-  await expect(app.getByText(/Priority actions/)).toBeVisible();
+  await expect(app.getByText('Get your complete action plan')).toBeVisible();
 
   await app.getByLabel('First name').fill('Ada');
   await app.getByLabel('Last name').fill('Lovelace');
   await app.getByLabel('Company').fill('Analytical Ltd');
   await app.getByLabel('Work email').fill('ada@example.test');
-  await app.getByRole('button', {name: 'View my full report'}).click();
+  await app.getByRole('button', {name: 'View my full action plan'}).click();
 
   await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: 'Your Health & Safety Healthcheck'})).toBeVisible();
   await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: "What you're already doing well"})).toBeVisible();
@@ -39,22 +43,22 @@ test('plugin assets are not loaded on unrelated pages', async ({page}) => {
   expect(sources.join(' ')).not.toContain('healthcheck.js');
 });
 
-test('profile uses cleaner selectable cards without nested fieldset boxes', async ({page}) => {
+test('initial tailoring asks only jurisdiction and employee count', async ({page}) => {
   await page.goto('/health-and-safety-healthcheck/');
   const app = healthcheck(page);
-
   await app.getByRole('button', {name: 'Start my Healthcheck'}).click();
 
-  const jurisdiction = app.getByRole('group', {name: 'Jurisdiction'});
-  await expect(jurisdiction).toBeVisible();
-  expect(await jurisdiction.evaluate(el => getComputedStyle(el).borderTopWidth)).toBe('0px');
+  await expect(app.getByRole('group', {name: 'Where is your main workplace?'})).toBeVisible();
+  await expect(app.getByRole('group', {name: 'How many people do you employ?'})).toBeVisible();
+  await expect(app.getByText('Organisation type / sector')).not.toBeVisible();
+  await expect(app.getByText('Responsibility for hot/cold water systems')).not.toBeVisible();
+});
 
-  const england = app.getByLabel('England');
-  const card = england.locator('..');
-  expect(await card.evaluate(el => getComputedStyle(el).borderRadius)).toBe('14px');
-
-  await england.check();
-  expect(await card.evaluate(el => getComputedStyle(el).backgroundColor)).toBe('rgb(234, 245, 241)');
+test('Acorn Safety blue is the primary assessment accent', async ({page}) => {
+  await page.goto('/health-and-safety-healthcheck/');
+  const app = healthcheck(page);
+  const button = app.getByRole('button', {name: 'Start my Healthcheck'});
+  await expect(button).toHaveCSS('background-color', 'rgb(8, 78, 135)');
 });
 
 test('resume landing gives Start again a subdued secondary treatment', async ({page}) => {
@@ -62,11 +66,9 @@ test('resume landing gives Start again a subdued secondary treatment', async ({p
   const app = healthcheck(page);
 
   await app.getByRole('button', {name: 'Start my Healthcheck'}).click();
-  await expect(app.getByRole('heading', {name: 'Your organisation'})).toBeVisible();
+  await expect(app.getByRole('heading', {name: 'A couple of details so we can tailor the Healthcheck'})).toBeVisible();
   await page.reload();
 
   const restart = app.getByRole('button', {name: 'Start again'});
   await expect(restart).toHaveClass(/acorn-hc__secondary/);
-  expect(await restart.evaluate(el => getComputedStyle(el).backgroundColor)).toBe('rgb(243, 245, 244)');
 });
-
