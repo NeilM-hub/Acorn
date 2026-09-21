@@ -179,7 +179,7 @@ a{color:inherit}
 <?php endif;?>
 </section>
 
-<section class="section">
+<?php if(!empty($report['next_steps'])):?><section class="section">
 <div class="section-intro">
 <div class="eyebrow">Practical next steps</div>
 <h2>What should you do next?</h2>
@@ -187,14 +187,14 @@ a{color:inherit}
 </div>
 <table class="next-steps">
 <?php foreach(array_chunk($report['next_steps'],2) as $row):?><tr>
-<?php foreach($row as $index=>$step):?><td>
+<?php foreach($row as $step):?><td>
 <div><span class="next-step-number"><?php echo (int)(array_search($step,$report['next_steps'],true)+1);?></span><strong><?php echo esc_html($step['title']);?></strong></div>
 <p><?php echo esc_html($step['body']);?></p>
 </td><?php endforeach;?>
 <?php if(count($row)===1):?><td></td><?php endif;?>
 </tr><?php endforeach;?>
 </table>
-</section>
+</section><?php endif;?>
 
 <section class="section">
 <div class="section-intro">
@@ -215,15 +215,15 @@ a{color:inherit}
 <div class="eyebrow" style="color:#d6eafa">How Acorn Safety Services can help</div>
 <h2><?php echo esc_html($report['support']['heading']);?></h2>
 <p><?php echo esc_html($report['support']['body']);?></p>
-<?php if(!empty($report['support']['options'])):?><table class="support-options">
-<?php foreach(array_chunk($report['support']['options'],2) as $row):?><tr>
+<?php if(!empty($report['support']['options'] ?? [])):?><table class="support-options">
+<?php foreach(array_chunk(($report['support']['options'] ?? []),2) as $row):?><tr>
 <?php foreach($row as $option):?><td><strong><?php echo esc_html($option['label']);?></strong><p><?php echo esc_html($option['body']);?></p></td><?php endforeach;?>
 <?php if(count($row)===1):?><td></td><?php endif;?>
 </tr><?php endforeach;?>
 </table><?php endif;?>
 <p class="cta">
 <a href="<?php echo esc_url($report['support']['cta_url']);?>"><?php echo esc_html($report['support']['cta_label']);?></a>
-<a class="secondary" href="<?php echo esc_url($report['support']['secondary_cta_url']);?>"><?php echo esc_html($report['support']['secondary_cta_label']);?></a>
+<?php if(!empty($report['support']['secondary_cta_url']) && !empty($report['support']['secondary_cta_label'])):?><a class="secondary" href="<?php echo esc_url($report['support']['secondary_cta_url']);?>"><?php echo esc_html($report['support']['secondary_cta_label']);?></a><?php endif;?>
 </p>
 <p><?php echo esc_html($report['branding']['phone']);?> &nbsp;|&nbsp; <?php echo esc_html($report['branding']['website']);?></p>
 </div>
