@@ -16,6 +16,9 @@ test('visitor completes profile, relevant questions, headline gate and contact c
   }
 
   await expect(app.getByRole('heading', {name: 'Your Healthcheck is complete'})).toBeVisible();
+  await expect(app.getByText('Here is your Healthcheck snapshot.')).toBeVisible();
+  await expect(app.getByText('Enter your details to view the full action plan and download your report.')).toBeVisible();
+  await expect(app.locator('.acorn-hc__headline-counts > div')).toHaveCount(3);
   await expect(app.getByText(/Priority actions/)).toBeVisible();
 
   await app.getByLabel('First name').fill('Ada');
