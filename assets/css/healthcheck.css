@@ -1027,3 +1027,106 @@
   .acorn-hc__priority-card{grid-template-columns:1fr}
   .acorn-hc__priority-number{margin-bottom:.35rem}
 }
+
+
+/* v1.2.2 report next-steps and support guidance */
+.acorn-hc__help-box{
+  margin-top:1rem;
+  padding:1rem 1.05rem;
+  border:1px solid #d3e3ee;
+  border-radius:12px;
+  background:#fbfdff;
+}
+.acorn-hc__help-box strong{
+  display:block;
+  margin-bottom:.35rem;
+  color:#084e87;
+}
+.acorn-hc__help-box p{
+  margin:0;
+  color:#405a6d;
+}
+.acorn-hc__next-steps{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.85rem;
+  margin-top:1rem;
+}
+.acorn-hc__next-steps article{
+  display:grid;
+  grid-template-columns:2.15rem 1fr;
+  gap:.85rem;
+  align-items:start;
+  padding:1rem;
+  border:1px solid #d8e3eb;
+  border-radius:14px;
+  background:#fbfdff;
+}
+.acorn-hc__next-steps h3{
+  margin:0 0 .35rem;
+  color:#1d4059;
+}
+.acorn-hc__next-steps p{
+  margin:0;
+  color:#536b7c;
+}
+.acorn-hc__next-step-number{
+  display:grid;
+  width:2rem;
+  height:2rem;
+  place-items:center;
+  border-radius:50%;
+  background:#084e87;
+  color:#fff;
+  font-weight:800;
+}
+.acorn-hc__support--executive .acorn-hc__eyebrow{
+  color:#d7eafa;
+}
+.acorn-hc__support-options{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.8rem;
+  margin:1.1rem 0 1.25rem;
+}
+.acorn-hc__support-options article{
+  padding:1rem;
+  border:1px solid rgba(255,255,255,.3);
+  border-radius:12px;
+  background:rgba(255,255,255,.06);
+}
+.acorn-hc__support-options h3{
+  margin:0 0 .35rem;
+  color:#fff;
+}
+.acorn-hc__support-options p{
+  margin:0;
+  color:#edf6fb;
+}
+.acorn-hc__support-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.75rem;
+  align-items:center;
+  margin-top:1rem;
+}
+.acorn-hc__secondary-link{
+  display:inline-block;
+  padding:.9rem 1.2rem;
+  border:1px solid rgba(255,255,255,.7);
+  border-radius:10px;
+  color:#fff;
+  font-weight:700;
+  text-decoration:none;
+}
+.acorn-hc__secondary-link:hover,
+.acorn-hc__secondary-link:focus-visible{
+  background:rgba(255,255,255,.1);
+  color:#fff;
+}
+@media(max-width:48rem){
+  .acorn-hc__next-steps,
+  .acorn-hc__support-options{
+    grid-template-columns:1fr;
+  }
+}
