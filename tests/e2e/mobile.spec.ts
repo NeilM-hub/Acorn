@@ -18,6 +18,6 @@ test('mobile visitor can complete the simplified Healthcheck and reach the repor
   await app.getByLabel('Work email').fill('mobile@example.test');
   await app.getByRole('button', {name: 'View my full action plan'}).click();
 
-  await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: 'Your Health & Safety Healthcheck'})).toBeVisible();
+  await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: 'Your Healthcheck is complete. Now turn the findings into action.'})).toBeVisible();
   await expect(page.locator('body')).toHaveCSS('overflow-x', /^(visible|auto|clip)$/);
 });
