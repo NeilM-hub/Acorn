@@ -22,6 +22,8 @@ final class SourceMetadata
         'height' => ['title' => 'HSE: Work at height', 'url' => 'https://www.hse.gov.uk/work-at-height/'],
         'young' => ['title' => 'HSE: Young workers', 'url' => 'https://www.hse.gov.uk/young-workers/employer/'],
         'driving' => ['title' => 'HSE: Work-related road safety', 'url' => 'https://www.hse.gov.uk/work-related-road-safety/'],
+        'employers_liability' => ['title' => "HSE: Employers' Liability (Compulsory Insurance) Act guide", 'url' => 'https://www.hse.gov.uk/pubns/hse40.htm'],
+        'law_information' => ['title' => 'HSE: Health and Safety Law poster', 'url' => 'https://www.hse.gov.uk/pubns/books/lawposter.htm'],
         'fire_england' => ['title' => 'GOV.UK: Workplace fire safety', 'url' => 'https://www.gov.uk/workplace-fire-safety-your-responsibilities'],
         'fire_wales' => ['title' => 'Welsh Government: Fire safety guidance', 'url' => 'https://www.gov.wales/fire-safety-guidance-businesses-and-workplaces'],
         'fire_scotland' => ['title' => 'Scottish Government: Non-domestic fire safety', 'url' => 'https://www.gov.scot/policies/fire-and-rescue/non-domestic-fire-safety/'],
@@ -37,7 +39,7 @@ final class SourceMetadata
         if (str_starts_with($key, 'F')) return self::SOURCES['fire_' . ($jurisdiction === '*' ? 'england' : $jurisdiction)];
         if (str_starts_with($key, 'L')) return self::SOURCES[$jurisdiction === 'northern_ireland' ? 'legionella_northern_ireland' : 'legionella_gb'];
         if (str_starts_with($key, 'AS')) return self::SOURCES[$jurisdiction === 'northern_ireland' ? 'asbestos_northern_ireland' : 'asbestos_gb'];
-        $map = ['M01'=>'competent','M02'=>'policy','M03'=>'policy','M04'=>'consult','R'=>'risk','T'=>'training','A01'=>'first_aid','A02'=>'riddor','A03'=>'riddor','W01'=>'workplace','W02'=>'equipment','C'=>'coshh','D'=>'dse','MH'=>'manual','LW'=>'lone','WAH'=>'height','YW'=>'young','DRV'=>'driving','CT'=>'risk'];
+        $map = ['M01'=>'competent','M02'=>'policy','M03'=>'policy','M04'=>'consult','R'=>'risk','P01'=>'training','T'=>'training','A01'=>'first_aid','A02'=>'riddor','A03'=>'riddor','A04'=>'riddor','W01'=>'workplace','W02'=>'equipment','W03'=>'workplace','S01'=>'risk','E01'=>'employers_liability','E02'=>'law_information','C'=>'coshh','D'=>'dse','MH'=>'manual','LW'=>'lone','WAH'=>'height','YW'=>'young','DRV'=>'driving','CT'=>'risk'];
         foreach ($map as $prefix => $source) if (str_starts_with($key, $prefix)) return self::SOURCES[$source];
         return self::SOURCES['risk'];
     }
