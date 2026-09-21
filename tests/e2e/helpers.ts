@@ -54,15 +54,23 @@ export async function progressToResults(
 
     const gate = app.locator('form[data-form="gate"]');
     if (await gate.isVisible().catch(() => false)) {
+      const heading = await app.getByRole('heading', {level: 2}).textContent();
       await gate.getByLabel('No', {exact: true}).check();
       await gate.getByRole('button', {name: 'Continue'}).click();
+      await expect
+        .poll(async () => (await app.getByRole('heading', {level: 2}).textContent().catch(() => '')) ?? '', {timeout: 5000})
+        .not.toBe(heading ?? '');
       continue;
     }
 
     const risks = app.locator('form[data-form="risks"]');
     if (await risks.isVisible().catch(() => false)) {
+      const heading = await app.getByRole('heading', {level: 2}).textContent();
       await risks.getByLabel('None of these', {exact: true}).check();
       await risks.getByRole('button', {name: 'Continue'}).click();
+      await expect
+        .poll(async () => (await app.getByRole('heading', {level: 2}).textContent().catch(() => '')) ?? '', {timeout: 5000})
+        .not.toBe(heading ?? '');
       continue;
     }
 
