@@ -93,6 +93,7 @@ h3{font-size:11.5pt;color:#17221f;margin:0 0 5px}
 <p><span class="row-label">What we found:</span> <?php echo esc_html($item['display_identified']);?></p>
 <p><span class="row-label">What to do next:</span> <?php echo esc_html($item['display_action']);?></p>
 <?php if(!empty($item['display_why'])):?><p><span class="row-label">Why it matters:</span> <?php echo esc_html($item['display_why']);?></p><?php endif;?>
+<?php if(!empty($item['display_good_looks'])):?><p><span class="row-label">What good looks like:</span> <?php echo esc_html($item['display_good_looks']);?></p><?php endif;?>
 </article>
 <?php endforeach;?>
 </section>
