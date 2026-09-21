@@ -6,7 +6,7 @@ test('online reload offers resume without storing contact data', async ({page}) 
   await healthcheck(page).getByRole('button', {name: /Start my.*Healthcheck/}).first().click();
   await expect(healthcheck(page).getByRole('heading', {name: 'A couple of details so we can tailor the Healthcheck'})).toBeVisible();
   await page.reload();
-  await expect(healthcheck(page).getByRole('button', {name: 'Continue Healthcheck'})).toBeVisible();
+  await expect(healthcheck(page).getByRole('button', {name: 'Continue Healthcheck'}).first()).toBeVisible();
 
   const saved = await page.evaluate(() => localStorage.getItem('acorn_hc_session_v1'));
   expect(saved).not.toContain('email');
