@@ -60,12 +60,7 @@ final class AssessmentService
         }
 
         $headline = in_array($assessment['status'], ['assessed', 'completed'], true)
-            ? [
-                'overall_status' => $assessment['overall_status'],
-                'priority_count' => (int) $assessment['priority_count'],
-                'review_count' => (int) $assessment['review_count'],
-                'addressed_count' => (int) $assessment['addressed_count'],
-            ]
+            ? $this->headline($assessment)
             : null;
 
         return new AssessmentState($assessment['status'], $profile, $questions, $answers, $headline);
@@ -178,6 +173,37 @@ final class AssessmentService
         ], ['id' => $assessment['id']]);
 
         return $this->resume($token)->jsonSerialize();
+    }
+
+    private function headline(array $assessment): array
+    {
+        global $wpdb;
+
+        $answers = Schema::table('answers');
+        $recommendations = Schema::table('recommendations');
+        $top = $wpdb->get_row($wpdb->prepare(
+            "SELECT a.finding_status,r.heading,r.identified_text
+             FROM $answers a
+             LEFT JOIN $recommendations r ON r.id=a.recommendation_row_id
+             WHERE a.assessment_id=%d AND a.finding_status IN ('priority','review')
+             ORDER BY CASE a.finding_status WHEN 'priority' THEN 0 ELSE 1 END,
+                      COALESCE(r.sort_rank,9999) ASC,
+                      a.id ASC
+             LIMIT 1",
+            $assessment['id']
+        ), ARRAY_A);
+
+        return [
+            'overall_status' => $assessment['overall_status'],
+            'priority_count' => (int) $assessment['priority_count'],
+            'review_count' => (int) $assessment['review_count'],
+            'addressed_count' => (int) $assessment['addressed_count'],
+            'top_action' => $top ? [
+                'status' => $top['finding_status'],
+                'heading' => (string) $top['heading'],
+                'summary' => (string) $top['identified_text'],
+            ] : null,
+        ];
     }
 
     private function require(string $token): array
