@@ -139,7 +139,7 @@ if(root){
         ${config.options.map(([v,l])=>`<label class="acorn-hc__answer"><input type="radio" name="gate_value" value="${v}" required ${value===v?'checked':''}><span>${escapeHtml(l)}</span></label>`).join('')}
       </fieldset>
       <p data-save aria-live="polite"></p>
-      <div class="acorn-hc__actions"><button class="acorn-hc__secondary" type="button" data-action="back">Back</button><button class="acorn-hc__primary" type="submit">Continue</button></div>
+      <div class="acorn-hc__actions"><button class="acorn-hc__secondary" type="button" data-action="back">Back</button></div>
     </form>
    </div>`;
   focusHeading();
@@ -305,6 +305,26 @@ if(root){
  });
 
  root.addEventListener('change',async e=>{
+  if(e.target.name!=='gate_value'||busy)return;
+  const form=e.target.closest('form[data-form="gate"]');
+  if(!form)return;
+
+  busy=true;
+  setSave('Saving…');
+  const field=form.dataset.field;
+
+  try{
+    await updateProfile({[field]:e.target.value});
+    setSave('Saved');
+    window.setTimeout(()=>advance(),220);
+  }catch(err){
+    form.insertAdjacentHTML('afterbegin',error(err.message));
+  }finally{
+    busy=false;
+  }
+ });
+
+ root.addEventListener('change',async e=>{
   if(e.target.name!=='answer'||busy)return;
   busy=true;setSave('Saving…');
   const q=questionByKey(currentStep?.key);
@@ -333,15 +353,6 @@ if(root){
     currentStep=null;
     advance();
    }catch(err){e.target.insertAdjacentHTML('afterbegin',error(err.message));}
-   return;
-  }
-
-  if(e.target.dataset.form==='gate'){
-   const f=new FormData(e.target);
-   const field=e.target.dataset.field;
-   setSave('Saving…');
-   try{await updateProfile({[field]:f.get('gate_value')});advance();}
-   catch(err){e.target.insertAdjacentHTML('afterbegin',error(err.message));}
    return;
   }
 
