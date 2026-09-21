@@ -1,2 +1,16 @@
 <?php
-return ['jurisdiction'=>['england','wales','scotland','northern_ireland'],'employee_band'=>['none','1_4','5_9','10_49','50_249','250_plus'],'sector'=>['office_professional','retail','hospitality','manufacturing','warehouse_logistics','construction_trades','property_fm','education','healthcare_care','automotive','leisure','charity','other'],'workplace_types'=>['office','retail','warehouse','workshop_manufacturing','education','care','construction_site','client_premises','home_working','other'],'premises_responsibility'=>['yes','partly','no','not_sure'],'shared_premises'=>['yes','no','not_sure'],'risk_flags'=>['dse','manual_handling','hazardous_substances','lone_working','work_at_height','machinery','contractors','young_workers','driving_for_work'],'water_system_responsibility'=>['yes','partly','no','not_sure'],'maintenance_repair_responsibility'=>['yes','partly','no','not_sure'],'building_pre_2000'=>['yes','no','not_sure','not_relevant'],'intrusive_work_planned'=>['yes','no','not_sure']];
+return [
+    'jurisdiction'=>['england','wales','scotland','northern_ireland'],
+    'employee_band'=>['none','1_4','5_9','10_49','50_249','250_plus'],
+    'sector'=>['office_professional','retail','hospitality','manufacturing','warehouse_logistics','construction_trades','property_fm','education','healthcare_care','automotive','leisure','charity','other'],
+    'workplace_types'=>['office','retail','warehouse','workshop_manufacturing','education','care','construction_site','client_premises','home_working','other'],
+    'premises_responsibility'=>['yes','partly','no','not_sure'],
+    'fire_safety_responsibility'=>['yes','partly','no','not_sure'],
+    'shared_premises'=>['yes','no','not_sure'],
+    'risk_flags'=>['dse','manual_handling','hazardous_substances','lone_working','work_at_height','machinery','contractors','young_workers','driving_for_work'],
+    'water_system_responsibility'=>['yes','partly','no','not_sure'],
+    'maintenance_repair_responsibility'=>['yes','partly','no','not_sure'],
+    'building_pre_2000'=>['yes','no','not_sure','not_relevant'],
+    'asbestos_responsibility'=>['yes','partly','no','not_sure'],
+    'intrusive_work_planned'=>['yes','no','not_sure'],
+];
