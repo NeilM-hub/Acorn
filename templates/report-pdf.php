@@ -43,7 +43,7 @@ h3{font-size:11.5pt;color:#17221f;margin:0 0 5px}
 .support{margin-top:26px;padding:18px;border-radius:9px;background:#155c4a;color:white}
 .support h2{color:white;margin-bottom:6px}
 .support p{margin-bottom:8px}
-.cta{font-weight:bold}
+.cta{font-weight:bold}.cta a{color:white;text-decoration:none;border-bottom:1px solid #b9d7cc}
 .disclaimer{margin-top:20px;padding-top:10px;border-top:1px solid #dce6e2;color:#687772;font-size:8pt}
 </style>
 </head>
@@ -93,6 +93,7 @@ h3{font-size:11.5pt;color:#17221f;margin:0 0 5px}
 <p><span class="row-label">What we found:</span> <?php echo esc_html($item['display_identified']);?></p>
 <p><span class="row-label">What to do next:</span> <?php echo esc_html($item['display_action']);?></p>
 <?php if(!empty($item['display_why'])):?><p><span class="row-label">Why it matters:</span> <?php echo esc_html($item['display_why']);?></p><?php endif;?>
+<?php if(!empty($item['display_good_looks'])):?><p><span class="row-label">What good looks like:</span> <?php echo esc_html($item['display_good_looks']);?></p><?php endif;?>
 </article>
 <?php endforeach;?>
 </section>
@@ -125,8 +126,8 @@ h3{font-size:11.5pt;color:#17221f;margin:0 0 5px}
 <div class="support">
 <h2><?php echo esc_html($report['support']['heading']);?></h2>
 <p><?php echo esc_html($report['support']['body']);?></p>
-<p class="cta"><?php echo esc_html($report['support']['cta_label']);?></p>
-<p><?php echo esc_html($report['branding']['website']);?></p>
+<p class="cta"><a href="<?php echo esc_url($report['support']['cta_url']);?>"><?php echo esc_html($report['support']['cta_label']);?></a></p>
+<p><?php echo esc_html($report['branding']['phone']);?> | <?php echo esc_html($report['branding']['website']);?></p>
 </div>
 
 <p class="disclaimer"><?php echo esc_html($report['disclaimer']);?></p>

@@ -37,6 +37,7 @@ final class ExecutiveReportTest extends IntegrationTestCase
         self::assertArrayHasKey('executive', $report);
         self::assertNotEmpty($report['executive']['summary_text']);
         self::assertNotEmpty($report['priority'][0]['display_heading']);
+        self::assertNotEmpty($report['priority'][0]['display_good_looks']);
         self::assertNotEmpty($report['review'][0]['display_heading']);
         self::assertStringNotContainsString('appears to be addressed based on your answer', strtolower($report['addressed'][0]['display_heading'] ?? ''));
 
@@ -46,8 +47,11 @@ final class ExecutiveReportTest extends IntegrationTestCase
 
         self::assertStringContainsString('Your Healthcheck at a glance', $html);
         self::assertStringContainsString('Your priority action plan', $html);
+        self::assertStringContainsString('What good looks like:', $html);
         self::assertStringContainsString('Other things worth reviewing', $html);
         self::assertStringContainsString("What you're already doing well", $html);
+        self::assertStringContainsString('Request a free Health &amp; Safety Compliance Audit', $html);
+        self::assertStringContainsString('href="https://acornhealthandsafety.co.uk/health-and-safety-compliance-audit/"', $html);
         self::assertStringNotContainsString('Action summary', $html);
     }
 }

@@ -18,7 +18,7 @@ composer install --working-dir="$plugin" --no-dev --optimize-autoloader --no-int
 rm -f "$plugin/composer.json" "$plugin/composer.lock"
 
 version="$(php -r '$data=file_get_contents($argv[1]); preg_match("/Version:\\s*([0-9.]+)/",$data,$m); echo $m[1]??"";' "$plugin/acorn-safety-healthcheck.php")"
-[[ "$version" == "1.0.2" ]] || { echo "Unexpected plugin version: $version" >&2; exit 1; }
+[[ "$version" == "1.0.3" ]] || { echo "Unexpected plugin version: $version" >&2; exit 1; }
 archive="$root/dist/acorn-safety-healthcheck-$version.zip"
 (cd "$build" && zip -qr "$archive" acorn-safety-healthcheck)
 [[ -s "$archive" ]]

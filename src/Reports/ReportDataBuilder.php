@@ -146,6 +146,7 @@ final class ReportDataBuilder
         $finding['display_action'] = (string) ($recommendation['next_step_text'] ?? '');
         $finding['display_identified'] = (string) ($recommendation['identified_text'] ?? '');
         $finding['display_why'] = (string) ($recommendation['why_text'] ?? '');
+        $finding['display_good_looks'] = (string) ($recommendation['good_looks_text'] ?? '');
 
         return $finding;
     }

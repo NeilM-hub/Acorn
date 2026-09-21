@@ -478,3 +478,37 @@
     grid-template-columns: 1fr;
   }
 }
+
+.acorn-hc__headline-counts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .8rem;
+  margin: 1.25rem 0 1.75rem;
+}
+
+.acorn-hc__headline-counts > div {
+  padding: 1rem;
+  border: 1px solid #dce6e2;
+  border-radius: 12px;
+  background: #f7fbf9;
+}
+
+.acorn-hc__headline-counts strong {
+  display: block;
+  color: var(--acorn);
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.acorn-hc__headline-counts span {
+  display: block;
+  margin-top: .4rem;
+  color: #40544d;
+  font-size: .92rem;
+}
+
+@media (max-width: 48rem) {
+  .acorn-hc__headline-counts {
+    grid-template-columns: 1fr;
+  }
+}
