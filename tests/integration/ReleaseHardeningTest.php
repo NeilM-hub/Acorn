@@ -91,6 +91,42 @@ final class ReleaseHardeningTest extends IntegrationTestCase
         self::assertArrayHasKey('internal', $errors);
     }
 
+    public function test_customer_pdf_attachment_has_a_real_pdf_filename(): void
+    {
+        add_filter('pre_wp_mail', '__return_true');
+        [$service, $token] = $this->assessed();
+
+        $mail = [];
+        remove_filter('pre_wp_mail', '__return_true');
+        add_filter('pre_wp_mail', static function ($return, array $atts) use (&$mail) {
+            if (($atts['to'] ?? '') === 'named-pdf@example.test') {
+                $mail = $atts;
+                $attachment = $atts['attachments'][0] ?? '';
+                $mail['attachment_exists'] = is_string($attachment) && is_file($attachment);
+                $mail['attachment_basename'] = is_string($attachment) ? basename($attachment) : '';
+                $mail['attachment_header'] = $mail['attachment_exists']
+                    ? (string) file_get_contents($attachment, false, null, 0, 5)
+                    : '';
+            }
+            return true;
+        }, 10, 2);
+
+        (new CompletionService())->complete($token, [
+            'first_name' => 'Ada',
+            'last_name' => 'Lovelace',
+            'company' => 'Example Company Ltd',
+            'email' => 'named-pdf@example.test',
+            'audit_requested' => false,
+            'marketing_consent' => false,
+        ]);
+
+        remove_all_filters('pre_wp_mail');
+
+        self::assertTrue($mail['attachment_exists']);
+        self::assertSame('Acorn-Safety-Healthcheck-Example-Company-Ltd.pdf', $mail['attachment_basename']);
+        self::assertSame('%PDF-', $mail['attachment_header']);
+    }
+
     public function test_report_resender_attaches_pdf_when_available(): void
     {
         add_filter('pre_wp_mail', '__return_true');
