@@ -99,6 +99,7 @@ final class ReportDataBuilder
             0,
             3
         );
+        $supportOptions = $this->supportOptions(array_merge($groups['priority'], $groups['review']));
 
         return [
             'meta' => [
@@ -134,13 +135,34 @@ final class ReportDataBuilder
             'review' => $groups['review'],
             'priority' => $groups['priority'],
             'action_summary' => array_merge($groups['priority'], $groups['review']),
+            'next_steps' => [
+                [
+                    'title' => 'Tackle priority actions first',
+                    'body' => 'Start with the priority actions in this report. Confirm what needs to change and deal with the most important gaps before moving on to lower-priority review items.',
+                ],
+                [
+                    'title' => 'Give each action an owner',
+                    'body' => 'Assign each action to a responsible person, agree what good looks like and record when the action has been completed.',
+                ],
+                [
+                    'title' => 'Work through the review items',
+                    'body' => 'Check the areas marked for review and confirm that the arrangements you already have are current, suitable and understood by the people who rely on them.',
+                ],
+                [
+                    'title' => 'Keep the plan live',
+                    'body' => 'Keep evidence of the action taken and review your arrangements when people, premises, equipment or the way you work changes.',
+                ],
+            ],
             'disclaimer' => 'This Healthcheck is based on information supplied through an online self-assessment. It highlights areas that may merit attention and does not constitute a formal audit, legal advice or confirmation of compliance.',
             'privacy_policy_url' => $settings['privacy_policy_url'],
             'support' => [
                 'heading' => 'Want help turning this into an action plan?',
-                'body' => 'Acorn Safety Services can review the areas highlighted in your Healthcheck and help you decide what needs attention first.',
+                'body' => 'Acorn Safety Services can review the areas highlighted in your Healthcheck, help you confirm the gaps and turn the findings into a practical action plan.',
+                'options' => $supportOptions,
                 'cta_label' => 'Request a free Health & Safety Compliance Audit',
                 'cta_url' => $settings['audit_cta_url'],
+                'secondary_cta_label' => 'Talk to us about ongoing Health & Safety support',
+                'secondary_cta_url' => 'tel:' . preg_replace('/[^0-9+]/', '', (string) $settings['report_contact_phone']),
             ],
         ];
     }
@@ -172,8 +194,76 @@ final class ReportDataBuilder
         $finding['display_good_looks'] = (string) ($recommendation['good_looks_text'] ?? '');
         $finding['display_owner'] = $this->ownerLabel((string) ($finding['module_key'] ?? ''));
         $finding['display_priority'] = $finding['finding_status'] === 'priority' ? 'Address first' : 'Review and confirm';
+        $finding['display_acorn_help'] = $this->acornHelp(
+            (string) ($finding['question_key'] ?? ''),
+            (string) ($finding['module_key'] ?? '')
+        );
 
         return $finding;
+    }
+
+    private function acornHelp(string $questionKey, string $module): string
+    {
+        return match ($questionKey) {
+            'M01_COMPETENT_PERSON' => 'Acorn Safety Services can act as your external competent person, giving you practical ongoing support without the cost of employing a dedicated health and safety professional.',
+            'F02_FIRE_RA' => 'Acorn Safety Services can complete or review your Fire Risk Assessment and help you turn any findings into a practical action plan.',
+            'F06_FIRE_ARRANGEMENTS' => 'Acorn Safety Services can review your fire emergency arrangements, fire precautions and related inspection or maintenance requirements.',
+            'L04_LEGIONELLA_MANAGEMENT' => 'Acorn Safety Services can carry out or review your Legionella risk assessment and help you put proportionate monitoring and control arrangements in place.',
+            'AS05_ASBESTOS_MANAGEMENT' => 'Acorn can review your existing asbestos information, identify gaps and help you put suitable management arrangements in place before maintenance or refurbishment work is carried out.',
+            'E01_EMPLOYERS_LIABILITY' => 'Acorn can help you review the wider health and safety management arrangements highlighted by this Healthcheck. Employers\' Liability cover itself should be confirmed with your insurer or broker.',
+            default => match ($module) {
+                'management', 'risk', 'people', 'incidents', 'workplace', 'specialist' => 'Acorn Safety Services can help you review and improve the relevant policies, risk assessments, training, records and management arrangements, with ongoing competent-person support where needed.',
+                'fire' => 'Acorn Safety Services can review the relevant fire-safety arrangements and help you address the actions identified.',
+                'legionella' => 'Acorn Safety Services can review the relevant Legionella arrangements and help you put suitable controls in place.',
+                'asbestos' => 'Acorn can review the relevant asbestos information and management arrangements and help you address identified gaps.',
+                default => 'Acorn Safety Services can help you review the issue and turn it into a practical action.',
+            },
+        };
+    }
+
+    private function supportOptions(array $findings): array
+    {
+        $areas = [];
+        foreach ($findings as $finding) {
+            $module = (string) ($finding['module_key'] ?? '');
+            if (in_array($module, ['management', 'risk', 'people', 'incidents', 'workplace', 'specialist'], true)) {
+                $areas['health_safety'] = true;
+            } elseif (in_array($module, ['fire', 'legionella', 'asbestos'], true)) {
+                $areas[$module] = true;
+            }
+        }
+
+        $options = [];
+        if (isset($areas['health_safety'])) {
+            $options[] = [
+                'key' => 'health_safety',
+                'label' => 'Health & Safety support',
+                'body' => 'Competent-person support, policies, risk assessments, training, inspections and practical help keeping your arrangements up to date.',
+            ];
+        }
+        if (isset($areas['fire'])) {
+            $options[] = [
+                'key' => 'fire',
+                'label' => 'Fire safety',
+                'body' => 'Fire Risk Assessments, fire-safety reviews and practical support addressing actions and maintaining suitable arrangements.',
+            ];
+        }
+        if (isset($areas['legionella'])) {
+            $options[] = [
+                'key' => 'legionella',
+                'label' => 'Legionella',
+                'body' => 'Legionella risk assessments, advice on responsibilities and support putting suitable monitoring and control measures in place.',
+            ];
+        }
+        if (isset($areas['asbestos'])) {
+            $options[] = [
+                'key' => 'asbestos',
+                'label' => 'Asbestos',
+                'body' => 'Help reviewing existing asbestos information, identifying gaps and putting suitable survey or management arrangements in place.',
+            ];
+        }
+
+        return $options;
     }
 
     private function ownerLabel(string $module): string
