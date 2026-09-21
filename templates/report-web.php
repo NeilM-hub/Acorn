@@ -9,18 +9,22 @@
 </head>
 <body>
 <main class="acorn-hc acorn-hc__report acorn-hc__report--executive" data-resend-url="<?php echo esc_url($resendUrl); ?>">
-<header class="acorn-hc__report-hero">
+<header class="acorn-hc__report-hero acorn-hc__report-hero--authority">
+<div class="acorn-hc__report-hero-top">
 <?php if($report['branding']['logo_url']):?><img class="acorn-hc__report-logo" src="<?php echo esc_url($report['branding']['logo_url']);?>" alt="Acorn Safety Services"><?php endif;?>
-<p class="acorn-hc__eyebrow">Health &amp; Safety Healthcheck</p>
-<h1>Your Health &amp; Safety Healthcheck</h1>
-<p class="acorn-hc__report-intro">A practical snapshot of what's working, what needs attention and what to do next.</p>
+<div class="acorn-hc__report-links acorn-hc__report-links--hero"><a href="<?php echo esc_url(trailingslashit($reportUrl).'pdf/'); ?>">Download PDF</a><button class="acorn-hc__secondary" type="button" data-action="resend-report">Resend email</button></div>
+</div>
+<p class="acorn-hc__eyebrow">Your Acorn Safety Healthcheck</p>
+<h1>Your Healthcheck is complete. Now turn the findings into action.</h1>
+<p class="acorn-hc__report-intro">You now have a clear view of what looks good, what needs attention and where to act first. Acorn Safety Services can help you verify the gaps, prioritise the right actions and put robust arrangements in place.</p>
+<div class="acorn-hc__authority-strip">Specialist guidance across Health &amp; Safety, Fire Safety, Legionella and Asbestos.</div>
 <div class="acorn-hc__report-meta"><strong><?php echo esc_html($report['meta']['company']); ?></strong><span><?php echo esc_html($report['meta']['assessment_date']); ?></span><span>Prepared by Acorn Safety Services</span></div>
 </header>
 
 <section>
 <div class="acorn-hc__section-heading">
 <div><p class="acorn-hc__eyebrow">Executive summary</p><h2>Your Healthcheck at a glance</h2></div>
-<div class="acorn-hc__report-links"><a href="<?php echo esc_url(trailingslashit($reportUrl).'pdf/'); ?>">Download PDF</a><button class="acorn-hc__secondary" type="button" data-action="resend-report">Resend email</button></div>
+
 </div>
 <p class="acorn-hc__report-lead"><?php echo esc_html($report['executive']['summary_text']); ?></p>
 <div class="acorn-hc__report-counts">
@@ -108,6 +112,7 @@
 <p class="acorn-hc__eyebrow">How Acorn Safety Services can help</p>
 <h2><?php echo esc_html($report['support']['heading']); ?></h2>
 <p><?php echo esc_html($report['support']['body']); ?></p>
+<div class="acorn-hc__authority-panel"><h3><?php echo esc_html($report['support']['authority_heading']); ?></h3><p><?php echo esc_html($report['support']['authority_intro']); ?></p><div class="acorn-hc__authority-points"><?php foreach($report['support']['authority_points'] as $point):?><article><strong><?php echo esc_html($point['title']);?></strong><p><?php echo esc_html($point['body']);?></p></article><?php endforeach;?></div></div>
 <?php if(!empty($report['support']['options'])):?><div class="acorn-hc__support-options">
 <?php foreach($report['support']['options'] as $option):?>
 <article><h3><?php echo esc_html($option['label']);?></h3><p><?php echo esc_html($option['body']);?></p></article>
