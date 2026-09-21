@@ -5,7 +5,7 @@ test('completed report offers a customer resend control', async ({page}) => {
   await page.goto('/health-and-safety-healthcheck/');
   const app = healthcheck(page);
 
-  await app.getByRole('button', {name: 'Start my Healthcheck'}).click();
+  await app.getByRole('button', {name: /Start my.*Healthcheck/}).first().click();
   await completeProfile(page);
   await progressToResults(page, 'Yes');
 
