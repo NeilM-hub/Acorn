@@ -187,20 +187,30 @@ final class ReportDataBuilder
 
     private function remoteImageData(string $url): string
     {
-        $response = wp_remote_get($url, ['timeout' => 4, 'redirection' => 2]);
+        $cacheKey = 'acorn_hc_logo_' . md5($url);
+        $cached = get_transient($cacheKey);
+        if (is_string($cached)) {
+            return $cached === '__failed__' ? '' : $cached;
+        }
+
+        $response = wp_remote_get($url, ['timeout' => 2, 'redirection' => 2]);
         if (is_wp_error($response)) {
+            set_transient($cacheKey, '__failed__', HOUR_IN_SECONDS);
             return '';
         }
 
         $body = (string) wp_remote_retrieve_body($response);
         if ($body === '') {
+            set_transient($cacheKey, '__failed__', HOUR_IN_SECONDS);
             return '';
         }
 
         $contentType = (string) wp_remote_retrieve_header($response, 'content-type');
         $mime = str_starts_with($contentType, 'image/') ? explode(';', $contentType)[0] : 'image/png';
+        $data = 'data:' . $mime . ';base64,' . base64_encode($body);
+        set_transient($cacheKey, $data, DAY_IN_SECONDS);
 
-        return 'data:' . $mime . ';base64,' . base64_encode($body);
+        return $data;
     }
 
     private function statusLabel(string $status): string
