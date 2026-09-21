@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use Acorn\SafetyHealthcheck\Assessment\{AssessmentService, CompletionService};
-use Acorn\SafetyHealthcheck\Content\ConciseContentUpgrade;
+use Acorn\SafetyHealthcheck\Content\{ConciseContentUpgrade, SimplifiedContentUpgrade};
 use Acorn\SafetyHealthcheck\Reports\ReportDataBuilder;
 
 final class ExecutiveReportTest extends IntegrationTestCase
@@ -53,5 +53,93 @@ final class ExecutiveReportTest extends IntegrationTestCase
         self::assertStringContainsString('Request a free Health &amp; Safety Compliance Audit', $html);
         self::assertStringContainsString('href="https://acornhealthandsafety.co.uk/health-and-safety-compliance-audit/"', $html);
         self::assertStringNotContainsString('Action summary', $html);
+    }
+
+    public function test_v1_2_report_uses_acorn_safety_branding_and_action_focussed_layout(): void
+    {
+        ConciseContentUpgrade::installIfNeeded();
+        SimplifiedContentUpgrade::installIfNeeded();
+
+        $service = new AssessmentService();
+        $start = $service->start();
+        $state = $service->updateProfile($start['token'], [
+            'jurisdiction' => 'england',
+            'employee_band' => '10_49',
+            'fire_safety_responsibility' => 'yes',
+            'water_system_responsibility' => 'yes',
+            'asbestos_responsibility' => 'yes',
+            'risk_flags' => ['dse', 'contractors'],
+        ]);
+
+        $answers = [
+            'M01_COMPETENT_PERSON' => 'no',
+            'R02_ACTION_REVIEW' => 'partly',
+            'F02_FIRE_RA' => 'no',
+            'F06_FIRE_ARRANGEMENTS' => 'no',
+            'L04_LEGIONELLA_MANAGEMENT' => 'not_sure',
+            'AS05_ASBESTOS_MANAGEMENT' => 'no',
+            'S01_SELECTED_RISK_CONTROLS' => 'not_sure',
+            'E01_EMPLOYERS_LIABILITY' => 'not_sure',
+        ];
+
+        foreach ($state->questions as $question) {
+            $service->saveAnswer(
+                $start['token'],
+                $question['question_key'],
+                $answers[$question['question_key']] ?? 'yes'
+            );
+        }
+
+        $service->assess($start['token']);
+        add_filter('pre_wp_mail', '__return_true');
+        $completed = (new CompletionService())->complete($start['token'], [
+            'first_name' => 'Report',
+            'last_name' => 'Tester',
+            'company' => 'Acorn Analytical Services',
+            'email' => 'report-v12@example.test',
+            'audit_requested' => false,
+            'marketing_consent' => false,
+        ]);
+        remove_filter('pre_wp_mail', '__return_true');
+
+        $report = (new ReportDataBuilder())->build($completed['assessment_id']);
+
+        self::assertSame(
+            'https://acornhealthandsafety.co.uk/wp-content/uploads/2019/04/Final-Small.png',
+            $report['branding']['logo_url']
+        );
+        self::assertSame(
+            'https://acornhealthandsafety.co.uk/wp-content/uploads/2020/03/Acorn-Safety-Logo-1-Small.png',
+            $report['branding']['horizontal_logo_url']
+        );
+        self::assertCount(3, $report['executive']['top_actions']);
+        self::assertSame('Competent health and safety support', $report['executive']['top_actions'][0]['display_heading']);
+        self::assertNotEmpty($report['priority'][0]['display_owner']);
+        self::assertSame('Address first', $report['priority'][0]['display_priority']);
+        self::assertStringNotContainsString('Then:', implode(' ', array_column($report['review'], 'display_action')));
+        self::assertStringNotContainsString(
+            'Confirm the current position and who is responsible.',
+            implode(' ', array_column($report['review'], 'display_action'))
+        );
+
+        ob_start();
+        require dirname(__DIR__, 2) . '/templates/report-pdf.php';
+        $pdfHtml = (string) ob_get_clean();
+
+        self::assertStringContainsString('What needs your attention first', $pdfHtml);
+        self::assertStringContainsString('Do this next', $pdfHtml);
+        self::assertStringContainsString('Suggested owner', $pdfHtml);
+        self::assertStringContainsString('Prepared by Acorn Safety Services', $pdfHtml);
+        self::assertStringNotContainsString('section-break', $pdfHtml);
+
+        $data = $report;
+        $reportUrl = 'https://example.test/secure-report/';
+        ob_start();
+        require dirname(__DIR__, 2) . '/templates/email-customer.php';
+        $emailHtml = (string) ob_get_clean();
+
+        self::assertStringContainsString('Acorn-Safety-Logo-1-Small.png', $emailHtml);
+        self::assertStringContainsString('Your first priority', $emailHtml);
+        self::assertStringContainsString('Competent health and safety support', $emailHtml);
     }
 }
