@@ -151,7 +151,7 @@ final class ExecutiveReportTest extends IntegrationTestCase
         self::assertStringContainsString('How Acorn can help', $pdfHtml);
         self::assertStringContainsString('What should you do next?', $pdfHtml);
         self::assertStringContainsString('How Acorn Safety Services can help', $pdfHtml);
-        self::assertStringContainsString("Don't leave the gaps sitting on a page.", $pdfHtml);
+        self::assertStringContainsString('Don&#039;t leave the gaps sitting on a page.', $pdfHtml);
         self::assertStringContainsString('One specialist team. Four critical compliance disciplines.', $pdfHtml);
         self::assertStringContainsString('Speak to an Acorn specialist', $pdfHtml);
         self::assertStringNotContainsString('section-break', $pdfHtml);
