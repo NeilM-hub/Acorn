@@ -100,10 +100,10 @@ a{color:inherit}
 <td><span class="count-number"><?php echo (int)$report['summary']['addressed_count'];?></span><span class="count-label"><?php echo esc_html($report['executive']['addressed_label']);?></span></td>
 </tr></table>
 
-<?php if($report['executive']['top_actions']):?>
+<?php if(!empty($report['executive']['top_actions'])):?>
 <div class="top-actions-title">What needs your attention first</div>
 <table class="top-actions">
-<?php foreach($report['executive']['top_actions'] as $index=>$item):?><tr>
+<?php foreach(($report['executive']['top_actions'] ?? []) as $index=>$item):?><tr>
 <td><span class="action-number"><?php echo (int)$index+1;?></span></td>
 <td><span class="action-name"><?php echo esc_html($item['display_heading']);?></span></td>
 <td style="text-align:right"><span class="status status-<?php echo esc_attr($item['finding_status']);?>"><?php echo esc_html($item['finding_status']==='priority'?'Priority action':'Review recommended');?></span></td>
