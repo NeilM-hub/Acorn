@@ -155,12 +155,11 @@ a{color:inherit}
 <p class="disclaimer"><?php echo esc_html($report['disclaimer']);?></p>
 </section>
 
-<section class="section">
+<?php if(!empty($report['priority'])):?><section class="section">
 <div class="section-intro">
 <div class="eyebrow">Deal with these first</div>
 <h2>Your priority action plan</h2>
 </div>
-<?php if(!$report['priority']):?><p class="lead">No priority actions were identified from your responses.</p><?php endif;?>
 <?php foreach($report['priority'] as $index=>$item):?>
 <article class="priority-card">
 <div class="priority-head">
@@ -177,15 +176,14 @@ a{color:inherit}
 </div>
 </article>
 <?php endforeach;?>
-</section>
+</section><?php endif;?>
 
-<section class="section">
+<?php if(!empty($report['review'])):?><section class="section">
 <div class="section-intro">
 <div class="eyebrow">Worth checking</div>
 <h2>Other things worth reviewing</h2>
 <p class="lead">These are not priority actions, but your answers suggest they are worth checking or confirming.</p>
 </div>
-<?php if(!$report['review']):?><p>No additional review items were identified.</p><?php else:?>
 <table class="review-grid">
 <?php foreach(array_chunk($report['review'],2) as $row):?><tr>
 <?php foreach($row as $item):?><td>
@@ -195,8 +193,7 @@ a{color:inherit}
 <?php if(count($row)===1):?><td></td><?php endif;?>
 </tr><?php endforeach;?>
 </table>
-<?php endif;?>
-</section>
+</section><?php endif;?>
 
 <?php if(!empty($report['next_steps'])):?><section class="section">
 <div class="section-intro">
