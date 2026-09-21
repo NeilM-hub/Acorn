@@ -55,7 +55,7 @@ final class CompletionService
         }
         try { if (!(new CustomerMailer())->send((int) $assessment['id'], $reportUrl, $attachment)) $emailErrors['customer'] = 'wp_mail returned false'; } catch (Throwable $error) { $emailErrors['customer'] = $error->getMessage(); }
         try { if (!(new InternalMailer())->send((int) $assessment['id'])) $emailErrors['internal'] = 'wp_mail returned false'; } catch (Throwable $error) { $emailErrors['internal'] = $error->getMessage(); }
-        if ($attachment && is_file($attachment)) unlink($attachment);
+        (new PdfGenerator())->cleanup($attachment);
         $emailStatus = !$emailErrors ? 'sent' : ((isset($emailErrors['customer']) && isset($emailErrors['internal'])) ? 'failed' : 'partial');
         $wpdb->update(Schema::table('assessments'), ['email_status' => $emailStatus, 'email_last_error' => $emailErrors ? wp_json_encode($emailErrors) : null], ['id' => $assessment['id']]);
         do_action('acorn_healthcheck_completed', (int) $assessment['id']);
