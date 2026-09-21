@@ -8,7 +8,7 @@ test('visitor completes simplified guided Healthcheck and reaches report', async
   await expect(app.getByLabel('Work email')).not.toBeVisible();
   await expect(app.getByRole('heading', {level: 1})).toContainText('Find the gaps.');
 
-  await app.getByRole('button', {name: /Start my.*Healthcheck/}).click();
+  await app.getByRole('button', {name: /Start my.*Healthcheck/}).first().click();
   await expect(app.getByRole('heading', {name: 'A couple of details so we can tailor the Healthcheck'})).toBeVisible();
 
   await completeProfile(page, '1–4');
@@ -75,7 +75,7 @@ test('plugin assets are not loaded on unrelated pages', async ({page}) => {
 test('initial tailoring asks only jurisdiction and employee count', async ({page}) => {
   await page.goto('/health-and-safety-healthcheck/');
   const app = healthcheck(page);
-  await app.getByRole('button', {name: /Start my.*Healthcheck/}).click();
+  await app.getByRole('button', {name: /Start my.*Healthcheck/}).first().click();
 
   await expect(app.getByRole('group', {name: 'Where is your main workplace?'})).toBeVisible();
   await expect(app.getByRole('group', {name: 'How many people do you employ?'})).toBeVisible();
@@ -86,7 +86,7 @@ test('initial tailoring asks only jurisdiction and employee count', async ({page
 test('Acorn Safety blue is the primary assessment accent', async ({page}) => {
   await page.goto('/health-and-safety-healthcheck/');
   const app = healthcheck(page);
-  const button = app.getByRole('button', {name: /Start my.*Healthcheck/});
+  const button = app.getByRole('button', {name: /Start my.*Healthcheck/}).first();
   await expect(button).toHaveCSS('background-color', 'rgb(8, 78, 135)');
 });
 
@@ -94,7 +94,7 @@ test('resume landing gives Start again a subdued secondary treatment', async ({p
   await page.goto('/health-and-safety-healthcheck/');
   const app = healthcheck(page);
 
-  await app.getByRole('button', {name: /Start my.*Healthcheck/}).click();
+  await app.getByRole('button', {name: /Start my.*Healthcheck/}).first().click();
   await expect(app.getByRole('heading', {name: 'A couple of details so we can tailor the Healthcheck'})).toBeVisible();
   await page.reload();
 
@@ -106,7 +106,7 @@ test('desktop question screens use the available assessment width', async ({page
   await page.goto('/health-and-safety-healthcheck/');
   const app = healthcheck(page);
 
-  await app.getByRole('button', {name: /Start my.*Healthcheck/}).click();
+  await app.getByRole('button', {name: /Start my.*Healthcheck/}).first().click();
   await completeProfile(page, '10–49');
 
   const wrap = app.locator('.acorn-hc__question-wrap');
@@ -124,7 +124,7 @@ test('single-choice routing questions auto-advance without a Continue button', a
   await page.goto('/health-and-safety-healthcheck/');
   const app = healthcheck(page);
 
-  await app.getByRole('button', {name: /Start my.*Healthcheck/}).click();
+  await app.getByRole('button', {name: /Start my.*Healthcheck/}).first().click();
   await completeProfile(page, '10–49');
 
   for (let i = 0; i < 9; i++) {
@@ -144,7 +144,7 @@ test('secure report opens with an authority-led action hero', async ({page}) => 
   await page.goto('/health-and-safety-healthcheck/');
   const app = healthcheck(page);
 
-  await app.getByRole('button', {name: /Start my.*Healthcheck/}).click();
+  await app.getByRole('button', {name: /Start my.*Healthcheck/}).first().click();
   await completeProfile(page);
   await progressToResults(page, 'No');
 
