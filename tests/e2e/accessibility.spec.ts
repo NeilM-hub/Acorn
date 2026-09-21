@@ -20,7 +20,7 @@ test('all public v1.2 stages meet WCAG A/AA and support keyboard operation', asy
 
   await expectAccessible(page, 'landing', '#acorn-healthcheck');
 
-  await app.getByRole('button', {name: 'Start my Healthcheck'}).focus();
+  await app.getByRole('button', {name: /Start my.*Healthcheck/}).first().focus();
   await page.keyboard.press('Enter');
   await expect(app.getByRole('heading', {name: 'A couple of details so we can tailor the Healthcheck'})).toBeFocused();
   await expectAccessible(page, 'tailoring', '#acorn-healthcheck');
