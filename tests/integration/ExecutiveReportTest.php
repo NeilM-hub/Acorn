@@ -48,6 +48,8 @@ final class ExecutiveReportTest extends IntegrationTestCase
         self::assertStringContainsString('Your priority action plan', $html);
         self::assertStringContainsString('Other things worth reviewing', $html);
         self::assertStringContainsString("What you're already doing well", $html);
+        self::assertStringContainsString('Request a free Health &amp; Safety Compliance Audit', $html);
+        self::assertStringContainsString('href="https://acornhealthandsafety.co.uk/health-and-safety-compliance-audit/"', $html);
         self::assertStringNotContainsString('Action summary', $html);
     }
 }
