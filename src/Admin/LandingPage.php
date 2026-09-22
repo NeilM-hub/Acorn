@@ -213,8 +213,7 @@ final class LandingPage
 
         echo '<div class="acorn-hc-editor__actions">';
         submit_button('Save Changes', 'primary', 'submit', false);
-        echo ' ';
-        submit_button('Restore default wording', 'secondary', 'acorn_hc_action', false, ['value' => 'restore', 'onclick' => "return confirm('Restore all landing page wording to the v1.2.5 defaults?');"]);
+        echo ' <button type="submit" class="button" name="acorn_hc_action" value="restore" onclick="return confirm(\'Restore all landing page wording to the v1.2.5 defaults?\');">Restore default wording</button>';
         echo '</div></form></div>';
     }
 }
