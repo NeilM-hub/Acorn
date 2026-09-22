@@ -37,7 +37,6 @@ final class SettingsPage
         $settings = array_merge($defaults, get_option('acorn_hc_settings', []));
 
         $general = [
-            'report_logo_url' => ['Logo URL', 'url'],
             'report_contact_phone' => ['Phone number', 'text'],
             'report_website' => ['Website', 'url'],
             'audit_cta_url' => ['Free Compliance Audit URL', 'url'],
@@ -46,7 +45,6 @@ final class SettingsPage
         ];
 
         $operational = [
-            'report_logo_attachment_id' => ['Logo attachment ID', 'number'],
             'report_horizontal_logo_url' => ['Horizontal logo URL', 'url'],
             'internal_recipient' => ['Internal notification email', 'email'],
             'completed_retention_days' => ['Completed assessment retention (days)', 'number'],
@@ -58,11 +56,36 @@ final class SettingsPage
         echo '<form method="post">';
         wp_nonce_field('acorn_hc_settings');
 
-        $this->section('General Settings', 'Customer-facing contact, branding and link settings.', $general, $settings);
+        echo '<section class="acorn-hc-editor__section"><h2>General Settings</h2><p>Customer-facing contact, branding and link settings.</p>';
+        $this->logoField($settings);
+        echo '<div class="acorn-hc-editor__fields">';
+        $this->fields($general, $settings);
+        echo '</div></section>';
+
         $this->section('Operational Settings', 'Existing technical and retention settings used by reports, notifications and cleanup.', $operational, $settings);
 
         submit_button();
         echo '</form></div>';
+    }
+
+    private function logoField(array $settings): void
+    {
+        $url = (string) ($settings['report_logo_url'] ?? '');
+        $attachmentId = (int) ($settings['report_logo_attachment_id'] ?? 0);
+
+        echo '<div class="acorn-hc-logo-field">';
+        echo '<strong>Logo</strong>';
+        echo '<div class="acorn-hc-logo-field__preview">';
+        if ($url !== '') {
+            echo '<img src="' . esc_url($url) . '" alt="Current Healthcheck logo">';
+        }
+        echo '</div>';
+        echo '<input type="hidden" name="report_logo_attachment_id" value="' . esc_attr((string) $attachmentId) . '">';
+        echo '<input type="hidden" name="report_logo_url" value="' . esc_attr($url) . '">';
+        echo '<p><button type="button" class="button" data-acorn-logo-choose>Choose logo</button> ';
+        echo '<button type="button" class="button-link-delete" data-acorn-logo-remove>Remove logo</button></p>';
+        echo '<p class="description">Choose an image from the WordPress Media Library. This logo is used on the Healthcheck landing page and reports.</p>';
+        echo '</div>';
     }
 
     private function section(string $title, string $description, array $fields, array $settings): void
@@ -70,13 +93,16 @@ final class SettingsPage
         echo '<section class="acorn-hc-editor__section">';
         echo '<h2>' . esc_html($title) . '</h2><p>' . esc_html($description) . '</p>';
         echo '<div class="acorn-hc-editor__fields">';
+        $this->fields($fields, $settings);
+        echo '</div></section>';
+    }
 
+    private function fields(array $fields, array $settings): void
+    {
         foreach ($fields as $key => [$label, $type]) {
             echo '<label><strong>' . esc_html($label) . '</strong>';
             echo '<input class="regular-text" type="' . esc_attr($type) . '" name="' . esc_attr($key) . '" value="' . esc_attr((string) $settings[$key]) . '">';
             echo '</label>';
         }
-
-        echo '</div></section>';
     }
 }
