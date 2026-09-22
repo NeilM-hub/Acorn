@@ -17,7 +17,10 @@ final class SettingsAdminTest extends IntegrationTestCase
         $html = (string) ob_get_clean();
 
         self::assertStringContainsString('General Settings', $html);
-        self::assertStringContainsString('Logo URL', $html);
+        self::assertStringContainsString('Logo', $html);
+        self::assertStringContainsString('Choose logo', $html);
+        self::assertStringContainsString('name="report_logo_attachment_id"', $html);
+        self::assertStringContainsString('name="report_logo_url"', $html);
         self::assertStringContainsString('Phone number', $html);
         self::assertStringContainsString('Website', $html);
         self::assertStringContainsString('Free Compliance Audit URL', $html);
