@@ -156,9 +156,8 @@ if(root){
     ${show('show_final_cta')?`<section class="acorn-hc__landing-final">
       <p class="acorn-hc__eyebrow">${safe('final_eyebrow')}</p><h2>${safe('final_heading')}</h2><p>${safe('final_body')}</p>
       ${repeatAction}<p class="acorn-hc__landing-final-micro">${bulletLine('final_micro')}</p>
-    </section>`:''}
-
-    <p class="acorn-hc__landing-disclaimer">${safe('disclaimer')}</p>
+    </section>
+    <p class="acorn-hc__landing-disclaimer">${safe('disclaimer')}</p>`:''}
    </div>`;
  }
  function tailoring(){
