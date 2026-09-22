@@ -10,6 +10,7 @@ final class Plugin
     {
         \Acorn\SafetyHealthcheck\Content\ConciseContentUpgrade::installIfNeeded();
         \Acorn\SafetyHealthcheck\Content\SimplifiedContentUpgrade::installIfNeeded();
+        \Acorn\SafetyHealthcheck\Content\ChecklistCoverageUpgrade::installIfNeeded();
         add_action('admin_enqueue_scripts', [$this, 'adminAssets']);
         add_action('admin_menu', [new \Acorn\SafetyHealthcheck\Admin\Menu(), 'register']);
         add_action('admin_post_acorn_hc_pdf', [new \Acorn\SafetyHealthcheck\Admin\AssessmentsPage(), 'downloadPdf']);
