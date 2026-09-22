@@ -1,5 +1,9 @@
+import {execFileSync} from 'node:child_process';
 import {test, expect} from '@playwright/test';
 import {answerCurrentQuestion, completeProfile, healthcheck, progressToResults} from './helpers';
+
+const wpEnv = (...args: string[]): string =>
+  execFileSync('npx', ['wp-env', 'run', 'cli', 'wp', ...args], {encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit']}).trim();
 
 test('visitor completes simplified guided Healthcheck and reaches report', async ({page}) => {
   await page.goto('/health-and-safety-healthcheck/');
@@ -67,6 +71,29 @@ test('landing page presents the complete Acorn Safety Healthcheck proposition', 
   );
 
   await expect(app.getByRole('button', {name: /Start my.*Healthcheck/})).toHaveCount(4);
+});
+
+test('saved landing content and final-section switch reach the rendered page', async ({page}) => {
+  wpEnv(
+    'eval',
+    "update_option('acorn_hc_landing_content', ['hero_title_line_1' => 'Admin edited heading', 'show_final_cta' => 0]);",
+  );
+
+  try {
+    await page.goto('/health-and-safety-healthcheck/');
+    const app = healthcheck(page);
+
+    await expect(app.getByRole('heading', {level: 1})).toContainText('Admin edited heading');
+    await expect(app.getByRole('heading', {name: 'Ready to see where things stand?'})).not.toBeVisible();
+    await expect(
+      app.getByText(
+        'This is an indicative self-assessment based on the information you provide. It is not a formal audit, legal advice or confirmation of compliance.',
+        {exact: true},
+      ),
+    ).not.toBeVisible();
+  } finally {
+    wpEnv('option', 'delete', 'acorn_hc_landing_content');
+  }
 });
 
 test('plugin assets are not loaded on unrelated pages', async ({page}) => {
