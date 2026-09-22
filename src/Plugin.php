@@ -34,6 +34,17 @@ final class Plugin
                 ACORN_HC_VERSION
             );
         }
+
+        if (str_contains($hook, 'acorn-healthcheck-settings')) {
+            wp_enqueue_media();
+            wp_enqueue_script(
+                'acorn-healthcheck-admin-settings',
+                plugins_url('assets/js/admin-settings.js', ACORN_HC_FILE),
+                [],
+                ACORN_HC_VERSION,
+                true
+            );
+        }
     }
 
     public function shortcode(): string
@@ -51,6 +62,15 @@ final class Plugin
             $settingsDefaults,
             is_array($savedSettings) ? $savedSettings : []
         );
+
+        $landingLogoUrl = (string) $healthcheckSettings['report_logo_url'];
+        $landingLogoId = (int) ($healthcheckSettings['report_logo_attachment_id'] ?? 0);
+        if ($landingLogoId) {
+            $attachmentLogoUrl = wp_get_attachment_image_url($landingLogoId, 'full');
+            if ($attachmentLogoUrl) {
+                $landingLogoUrl = (string) $attachmentLogoUrl;
+            }
+        }
 
         ob_start();
         require ACORN_HC_DIR . 'templates/shortcode-shell.php';
