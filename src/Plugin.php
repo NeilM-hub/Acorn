@@ -45,6 +45,13 @@ final class Plugin
             is_array($savedLanding) ? $savedLanding : []
         );
 
+        $settingsDefaults = require ACORN_HC_DIR . 'config/settings-defaults.php';
+        $savedSettings = get_option('acorn_hc_settings', []);
+        $healthcheckSettings = array_merge(
+            $settingsDefaults,
+            is_array($savedSettings) ? $savedSettings : []
+        );
+
         ob_start();
         require ACORN_HC_DIR . 'templates/shortcode-shell.php';
 
