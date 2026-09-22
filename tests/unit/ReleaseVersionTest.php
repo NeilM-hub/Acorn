@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 final class ReleaseVersionTest extends TestCase
 {
-    public function test_plugin_header_runtime_and_release_zip_match_v1_2_5(): void
+    public function test_plugin_header_runtime_and_release_zip_match_v1_2_6(): void
     {
         $root = dirname(__DIR__, 2);
         $bootstrap = file_get_contents($root . '/acorn-safety-healthcheck.php');
@@ -15,10 +15,10 @@ final class ReleaseVersionTest extends TestCase
         $smoke = file_get_contents($root . '/bin/smoke-release-zip.sh');
 
         self::assertMatchesRegularExpression('/Version:\\s*1\\.2\\.5/', $bootstrap);
-        self::assertStringContainsString("define('ACORN_HC_VERSION', '1.2.5')", $bootstrap);
-        self::assertStringContainsString('acorn-safety-healthcheck-1.2.5.zip', $workflow);
-        self::assertStringContainsString('acorn-safety-healthcheck-1.2.5', $workflow);
-        self::assertStringContainsString('[[ "$version" == "1.2.5" ]]', $build);
-        self::assertStringContainsString('acorn-safety-healthcheck-1.2.5.zip', $smoke);
+        self::assertStringContainsString("define('ACORN_HC_VERSION', '1.2.6')", $bootstrap);
+        self::assertStringContainsString('acorn-safety-healthcheck-1.2.6.zip', $workflow);
+        self::assertStringContainsString('acorn-safety-healthcheck-1.2.6', $workflow);
+        self::assertStringContainsString('[[ "$version" == "1.2.6" ]]', $build);
+        self::assertStringContainsString('acorn-safety-healthcheck-1.2.6.zip', $smoke);
     }
 }
