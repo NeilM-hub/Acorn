@@ -96,6 +96,55 @@ test('saved landing content and final-section switch reach the rendered page', a
   }
 });
 
+test('landing page is polished and overflow-free on a phone viewport', async ({page}) => {
+  await page.setViewportSize({width: 390, height: 844});
+  await page.goto('/health-and-safety-healthcheck/');
+
+  const app = healthcheck(page);
+  const landing = app.locator('.acorn-hc__landing');
+  await expect(landing).toBeVisible();
+
+  const metrics = await page.evaluate(() => ({
+    viewport: window.innerWidth,
+    documentWidth: document.documentElement.scrollWidth,
+  }));
+  expect(metrics.documentWidth).toBeLessThanOrEqual(metrics.viewport);
+
+  const heading = app.getByRole('heading', {level: 1});
+  const headingSize = parseFloat(await heading.evaluate(el => getComputedStyle(el).fontSize));
+  expect(headingSize).toBeLessThanOrEqual(48);
+
+  const action = app.locator('.acorn-hc__landing-actions').first();
+  const primary = action.locator('.acorn-hc__primary').first();
+  const actionBox = await action.boundingBox();
+  const primaryBox = await primary.boundingBox();
+  expect(primaryBox?.width ?? 0).toBeLessThanOrEqual((actionBox?.width ?? 0) + 1);
+
+  const heroCard = app.locator('.acorn-hc__landing-hero-card');
+  const cardBox = await heroCard.boundingBox();
+  expect(cardBox?.width ?? 0).toBeLessThanOrEqual(360);
+});
+
+test('guided assessment actions fit comfortably on a phone viewport', async ({page}) => {
+  await page.setViewportSize({width: 390, height: 844});
+  await page.goto('/health-and-safety-healthcheck/');
+  const app = healthcheck(page);
+
+  await app.getByRole('button', {name: /Start my.*Healthcheck/}).first().click();
+
+  const actionButton = app.getByRole('button', {name: 'Start the questions'});
+  const appBox = await app.boundingBox();
+  const buttonBox = await actionButton.boundingBox();
+
+  expect(buttonBox?.width ?? 0).toBeLessThanOrEqual((appBox?.width ?? 0) + 1);
+
+  const metrics = await page.evaluate(() => ({
+    viewport: window.innerWidth,
+    documentWidth: document.documentElement.scrollWidth,
+  }));
+  expect(metrics.documentWidth).toBeLessThanOrEqual(metrics.viewport);
+});
+
 test('plugin assets are not loaded on unrelated pages', async ({page}) => {
   await page.goto('/');
   const sources = await page.locator('script,link').evaluateAll(nodes =>
