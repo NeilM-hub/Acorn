@@ -11,6 +11,7 @@ final class Menu
         add_submenu_page('acorn-healthcheck','Assessments','Assessments','manage_acorn_healthcheck','acorn-healthcheck-assessments',[new AssessmentsPage(),'render']);
         add_submenu_page('acorn-healthcheck','Questions & Recommendations','Content','manage_acorn_healthcheck','acorn-healthcheck-content',[new ContentPage(),'render']);
         add_submenu_page('acorn-healthcheck','Content Review','Content Review','manage_acorn_healthcheck','acorn-healthcheck-review',[new ReviewPage(),'render']);
+        add_submenu_page('acorn-healthcheck','Landing Page','Landing Page','manage_acorn_healthcheck','acorn-healthcheck-landing',[new LandingPage(),'render']);
         add_submenu_page('acorn-healthcheck','Settings','Settings','manage_acorn_healthcheck','acorn-healthcheck-settings',[new SettingsPage(),'render']);
     }
 }
