@@ -14,7 +14,7 @@ final class ReleaseVersionTest extends TestCase
         $build = file_get_contents($root . '/bin/build-zip.sh');
         $smoke = file_get_contents($root . '/bin/smoke-release-zip.sh');
 
-        self::assertMatchesRegularExpression('/Version:\\s*1\\.2\\.5/', $bootstrap);
+        self::assertMatchesRegularExpression('/Version:\\s*1\\.2\\.6/', $bootstrap);
         self::assertStringContainsString("define('ACORN_HC_VERSION', '1.2.6')", $bootstrap);
         self::assertStringContainsString('acorn-safety-healthcheck-1.2.6.zip', $workflow);
         self::assertStringContainsString('acorn-safety-healthcheck-1.2.6', $workflow);
