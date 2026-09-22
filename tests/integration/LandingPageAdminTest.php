@@ -27,6 +27,10 @@ final class LandingPageAdminTest extends IntegrationTestCase
 
     public function test_admin_menu_registers_landing_page_editor(): void
     {
+        $userId = self::factory()->user->create(['role' => 'administrator']);
+        wp_set_current_user($userId);
+        get_role('administrator')->add_cap('manage_acorn_healthcheck');
+
         global $submenu;
         $submenu = [];
 
