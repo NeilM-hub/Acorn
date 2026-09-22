@@ -66,7 +66,7 @@ test('landing page presents the complete Acorn Safety Healthcheck proposition', 
     'https://acornhealthandsafety.co.uk/health-and-safety-compliance-audit/',
   );
 
-  await expect(app.getByRole('button', {name: /Start my.*Healthcheck/})).toHaveCount(3);
+  await expect(app.getByRole('button', {name: /Start my.*Healthcheck/})).toHaveCount(4);
 });
 
 test('plugin assets are not loaded on unrelated pages', async ({page}) => {
