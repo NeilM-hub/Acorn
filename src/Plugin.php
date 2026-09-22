@@ -38,6 +38,13 @@ final class Plugin
 
     public function shortcode(): string
     {
+        $landingDefaults = require ACORN_HC_DIR . 'config/landing-page-defaults.php';
+        $savedLanding = get_option('acorn_hc_landing_content', []);
+        $landingContent = array_merge(
+            $landingDefaults,
+            is_array($savedLanding) ? $savedLanding : []
+        );
+
         ob_start();
         require ACORN_HC_DIR . 'templates/shortcode-shell.php';
 
