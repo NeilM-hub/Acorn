@@ -1,23 +1,19 @@
 import {test, expect} from '@playwright/test';
-import {answerCurrentQuestion, completeProfile, healthcheck} from './helpers';
+import {completeProfile, healthcheck, progressToResults} from './helpers';
 
 test('completed report offers a customer resend control', async ({page}) => {
   await page.goto('/health-and-safety-healthcheck/');
   const app = healthcheck(page);
 
-  await app.getByRole('button', {name: 'Start my Healthcheck'}).click();
+  await app.getByRole('button', {name: /Start my.*Healthcheck/}).first().click();
   await completeProfile(page);
-
-  for (let i = 0; i < 30; i++) {
-    if (await app.getByRole('heading', {name: 'Your Healthcheck is complete'}).isVisible().catch(() => false)) break;
-    await answerCurrentQuestion(page, 'Yes');
-  }
+  await progressToResults(page, 'Yes');
 
   await app.getByLabel('First name').fill('Resend');
   await app.getByLabel('Last name').fill('Tester');
   await app.getByLabel('Company').fill('Resend Test Ltd');
   await app.getByLabel('Work email').fill('resend@example.test');
-  await app.getByRole('button', {name: 'View my full report'}).click();
+  await app.getByRole('button', {name: 'View my full action plan'}).click();
 
   const report = page.locator('.acorn-hc__report');
   const button = report.getByRole('button', {name: 'Resend email'});

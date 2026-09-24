@@ -9,18 +9,22 @@
 </head>
 <body>
 <main class="acorn-hc acorn-hc__report acorn-hc__report--executive" data-resend-url="<?php echo esc_url($resendUrl); ?>">
-<header class="acorn-hc__report-hero">
+<header class="acorn-hc__report-hero acorn-hc__report-hero--authority">
+<div class="acorn-hc__report-hero-top">
 <?php if($report['branding']['logo_url']):?><img class="acorn-hc__report-logo" src="<?php echo esc_url($report['branding']['logo_url']);?>" alt="Acorn Safety Services"><?php endif;?>
-<p class="acorn-hc__eyebrow">Acorn Safety Services</p>
-<h1>Your Health &amp; Safety Healthcheck</h1>
-<p class="acorn-hc__report-intro">A practical snapshot of what's working, what needs attention and what to do next.</p>
-<p><strong><?php echo esc_html($report['meta']['company']); ?></strong> | <?php echo esc_html($report['meta']['assessment_date']); ?></p>
+<div class="acorn-hc__report-links acorn-hc__report-links--hero"><a href="<?php echo esc_url(trailingslashit($reportUrl).'pdf/'); ?>">Download PDF</a><button class="acorn-hc__secondary" type="button" data-action="resend-report">Resend email</button></div>
+</div>
+<p class="acorn-hc__eyebrow">Your Acorn Safety Healthcheck</p>
+<h1>Your Healthcheck is complete. Now turn the findings into action.</h1>
+<p class="acorn-hc__report-intro">You now have a clear view of what looks good, what needs attention and where to act first. Acorn Safety Services can help you verify the gaps, prioritise the right actions and put robust arrangements in place.</p>
+<div class="acorn-hc__authority-strip">Specialist guidance across Health &amp; Safety, Fire Safety, Legionella and Asbestos.</div>
+<div class="acorn-hc__report-meta"><strong><?php echo esc_html($report['meta']['company']); ?></strong><span><?php echo esc_html($report['meta']['assessment_date']); ?></span><span>Prepared by Acorn Safety Services</span></div>
 </header>
 
 <section>
 <div class="acorn-hc__section-heading">
 <div><p class="acorn-hc__eyebrow">Executive summary</p><h2>Your Healthcheck at a glance</h2></div>
-<div class="acorn-hc__report-links"><a href="<?php echo esc_url(trailingslashit($reportUrl).'pdf/'); ?>">Download PDF</a><button class="acorn-hc__secondary" type="button" data-action="resend-report">Resend email</button></div>
+
 </div>
 <p class="acorn-hc__report-lead"><?php echo esc_html($report['executive']['summary_text']); ?></p>
 <div class="acorn-hc__report-counts">
@@ -28,6 +32,20 @@
 <div><strong><?php echo (int)$report['summary']['review_count']; ?></strong><span><?php echo esc_html($report['executive']['review_label']); ?></span></div>
 <div><strong><?php echo (int)$report['summary']['addressed_count']; ?></strong><span><?php echo esc_html($report['executive']['addressed_label']); ?></span></div>
 </div>
+
+<?php if($report['executive']['top_actions']):?>
+<div class="acorn-hc__top-actions">
+<p class="acorn-hc__eyebrow">What needs your attention first</p>
+<?php foreach($report['executive']['top_actions'] as $index=>$item):?>
+<article>
+<span class="acorn-hc__top-number"><?php echo (int)$index+1;?></span>
+<div><h3><?php echo esc_html($item['display_heading']);?></h3><p><?php echo esc_html($item['display_action']);?></p></div>
+<span class="acorn-hc__status acorn-hc__status--<?php echo esc_attr($item['finding_status']);?>"><?php echo esc_html($item['finding_status']==='priority'?'Priority action':'Review recommended');?></span>
+</article>
+<?php endforeach;?>
+</div>
+<?php endif;?>
+
 <div class="acorn-hc__pillar-grid">
 <?php foreach($report['pillars'] as $pillar):?>
 <div class="acorn-hc__pillar-card"><strong><?php echo esc_html($pillar['label']);?></strong><span class="acorn-hc__status acorn-hc__status--<?php echo esc_attr($pillar['status']);?>"><?php echo esc_html($pillar['display_status']);?></span></div>
@@ -46,10 +64,12 @@
 <div class="acorn-hc__priority-number"><?php echo (int)$index+1;?></div>
 <div>
 <h3><?php echo esc_html($item['display_heading']);?></h3>
-<p><strong>What we found:</strong> <?php echo esc_html($item['display_identified']);?></p>
-<p><strong>What to do next:</strong> <?php echo esc_html($item['display_action']);?></p>
-<?php if(!empty($item['display_why'])):?><p class="acorn-hc__muted"><strong>Why it matters:</strong> <?php echo esc_html($item['display_why']);?></p><?php endif;?>
-<?php if(!empty($item['display_good_looks'])):?><p class="acorn-hc__muted"><strong>What good looks like:</strong> <?php echo esc_html($item['display_good_looks']);?></p><?php endif;?>
+<div class="acorn-hc__finding-block"><span>What we found</span><p><?php echo esc_html($item['display_identified']);?></p></div>
+<div class="acorn-hc__finding-block acorn-hc__finding-block--next"><span>Do this next</span><p><?php echo esc_html($item['display_action']);?></p></div>
+<?php if(!empty($item['display_why'])):?><div class="acorn-hc__finding-block"><span>Why it matters</span><p><?php echo esc_html($item['display_why']);?></p></div><?php endif;?>
+<?php if(!empty($item['display_good_looks'])):?><div class="acorn-hc__good-box"><strong>What good looks like:</strong> <?php echo esc_html($item['display_good_looks']);?></div><?php endif;?>
+<?php if(!empty($item['display_acorn_help'])):?><div class="acorn-hc__help-box"><strong>How Acorn can help</strong><p><?php echo esc_html($item['display_acorn_help']);?></p></div><?php endif;?>
+<div class="acorn-hc__action-meta"><span><strong>Suggested owner:</strong> <?php echo esc_html($item['display_owner']);?></span><span><strong>Suggested priority:</strong> <?php echo esc_html($item['display_priority']);?></span></div>
 </div>
 </article>
 <?php endforeach;?>
@@ -59,11 +79,22 @@
 <section>
 <p class="acorn-hc__eyebrow">Worth checking</p>
 <h2>Other things worth reviewing</h2>
-<p>These are not shown as priority actions, but your answers suggest they are worth checking or confirming.</p>
+<p>These are not priority actions, but your answers suggest they are worth checking or confirming.</p>
 <div class="acorn-hc__review-list">
 <?php if(!$report['review']):?><p>No additional review items were identified.</p><?php endif;?>
 <?php foreach($report['review'] as $item):?>
 <article><h3><?php echo esc_html($item['display_heading']);?></h3><p><?php echo esc_html($item['display_action']);?></p></article>
+<?php endforeach;?>
+</div>
+</section>
+
+<section>
+<p class="acorn-hc__eyebrow">Practical next steps</p>
+<h2>What should you do next?</h2>
+<p>Use this report as a working action plan rather than a one-off checklist.</p>
+<div class="acorn-hc__next-steps">
+<?php foreach($report['next_steps'] as $index=>$step):?>
+<article><span class="acorn-hc__next-step-number"><?php echo (int)$index+1;?></span><div><h3><?php echo esc_html($step['title']);?></h3><p><?php echo esc_html($step['body']);?></p></div></article>
 <?php endforeach;?>
 </div>
 </section>
@@ -78,9 +109,19 @@
 </section>
 
 <section class="acorn-hc__support acorn-hc__support--executive">
+<p class="acorn-hc__eyebrow">How Acorn Safety Services can help</p>
 <h2><?php echo esc_html($report['support']['heading']); ?></h2>
 <p><?php echo esc_html($report['support']['body']); ?></p>
+<div class="acorn-hc__authority-panel"><h3><?php echo esc_html($report['support']['authority_heading']); ?></h3><p><?php echo esc_html($report['support']['authority_intro']); ?></p><div class="acorn-hc__authority-points"><?php foreach($report['support']['authority_points'] as $point):?><article><strong><?php echo esc_html($point['title']);?></strong><p><?php echo esc_html($point['body']);?></p></article><?php endforeach;?></div></div>
+<?php if(!empty($report['support']['options'])):?><div class="acorn-hc__support-options">
+<?php foreach($report['support']['options'] as $option):?>
+<article><h3><?php echo esc_html($option['label']);?></h3><p><?php echo esc_html($option['body']);?></p></article>
+<?php endforeach;?>
+</div><?php endif;?>
+<div class="acorn-hc__support-actions">
 <a class="acorn-hc__primary" href="<?php echo esc_url($report['support']['cta_url']); ?>"><?php echo esc_html($report['support']['cta_label']); ?></a>
+<a class="acorn-hc__secondary-link" href="<?php echo esc_url($report['support']['secondary_cta_url']); ?>"><?php echo esc_html($report['support']['secondary_cta_label']); ?></a>
+</div>
 </section>
 
 <p class="acorn-hc__report-disclaimer"><?php echo esc_html($report['disclaimer']); ?></p>

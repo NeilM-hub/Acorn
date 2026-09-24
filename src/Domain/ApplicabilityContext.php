@@ -18,23 +18,40 @@ final class ApplicabilityContext
     public static function fromProfile(array $profile): self
     {
         $definitions = require dirname(__DIR__, 2) . '/config/profile-fields.php';
-        foreach ($definitions as $key => $allowed) {
-            if (!array_key_exists($key, $profile)) {
-                throw new InvalidArgumentException("Missing profile field: $key");
+
+        foreach ($profile as $key => $value) {
+            if (!array_key_exists($key, $definitions)) {
+                throw new InvalidArgumentException("Unknown profile field: $key");
             }
-            $values = in_array($key, ['workplace_types', 'risk_flags'], true) ? $profile[$key] : [$profile[$key]];
+
+            $allowed = $definitions[$key];
+            $values = in_array($key, ['workplace_types', 'risk_flags'], true) ? $value : [$value];
+
             if (!is_array($values) || array_diff($values, $allowed)) {
                 throw new InvalidArgumentException("Invalid profile field: $key");
             }
-        }
-        if ($profile['workplace_types'] === []) {
-            throw new InvalidArgumentException('Select at least one workplace type.');
+
+            if ($key === 'workplace_types' && $values === []) {
+                throw new InvalidArgumentException('Select at least one workplace type.');
+            }
         }
 
         return new self($profile);
     }
 
-    public function hasRiskFlag(string $flag): bool { return in_array($flag, $this->profile['risk_flags'], true); }
-    public function hasEmployees(): bool { return $this->profile['employee_band'] !== 'none'; }
-    public function nonHomeWorkplace(): bool { return array_diff($this->profile['workplace_types'], ['home_working']) !== []; }
+    public function hasRiskFlag(string $flag): bool
+    {
+        return in_array($flag, $this->profile['risk_flags'] ?? [], true);
+    }
+
+    public function hasEmployees(): bool
+    {
+        return isset($this->profile['employee_band']) && $this->profile['employee_band'] !== 'none';
+    }
+
+    public function nonHomeWorkplace(): bool
+    {
+        $types = $this->profile['workplace_types'] ?? [];
+        return $types !== [] && array_diff($types, ['home_working']) !== [];
+    }
 }
