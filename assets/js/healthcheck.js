@@ -356,8 +356,8 @@ if(root){
         <label>Telephone<input type="tel" name="telephone" autocomplete="tel"></label>
        </div>
        <fieldset><legend>Would you like Acorn Safety Services to contact you about any of the areas highlighted or arrange a free compliance audit?</legend>
-        <label><input type="radio" name="audit_requested" value="yes"> Yes please</label>
-        <label><input type="radio" name="audit_requested" value="no" checked> Not at the moment</label>
+        <label><input type="radio" name="audit_requested" value="yes" required> Yes please</label>
+        <label><input type="radio" name="audit_requested" value="no"> Not at the moment</label>
        </fieldset>
        <label data-audit-postcode hidden>Postcode<input name="postcode" autocomplete="postal-code"></label>
        <label class="acorn-hc__marketing"><input type="checkbox" name="marketing_consent"> I'd also like to receive occasional health and safety guidance and updates from Acorn Safety Services.</label>
