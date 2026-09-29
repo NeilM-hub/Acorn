@@ -29,10 +29,25 @@ test('visitor completes simplified guided Healthcheck and reaches report', async
   await expect(app.locator('.acorn-hc__headline-counts > div')).toHaveCount(3);
   await expect(app.getByText('Get your complete action plan')).toBeVisible();
 
+  const auditYes = app.getByLabel('Yes please');
+  const auditNo = app.getByLabel('Not at the moment');
+  const marketing = app.getByLabel(/occasional health and safety guidance and updates/);
+
+  await expect(auditYes).not.toBeChecked();
+  await expect(auditNo).not.toBeChecked();
+  await expect(marketing).not.toBeChecked();
+  await expect(auditYes).toHaveJSProperty('required', true);
+
   await app.getByLabel('First name').fill('Ada');
   await app.getByLabel('Last name').fill('Lovelace');
   await app.getByLabel('Company').fill('Analytical Ltd');
   await app.getByLabel('Work email').fill('ada@example.test');
+
+  await app.getByRole('button', {name: 'View my full action plan'}).click();
+  await expect(auditYes).toHaveJSProperty('validity.valueMissing', true);
+  await expect(app.getByText('Get your complete action plan')).toBeVisible();
+
+  await auditNo.check();
   await app.getByRole('button', {name: 'View my full action plan'}).click();
 
   await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: 'Your Healthcheck is complete. Now turn the findings into action.'})).toBeVisible();
