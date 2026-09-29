@@ -47,6 +47,7 @@ test('all public v1.2 stages meet WCAG A/AA and support keyboard operation', asy
   await app.getByLabel('Last name').fill('Lovelace');
   await app.getByLabel('Company').fill('Accessible Ltd');
   await app.getByLabel('Work email').fill('accessibility@example.test');
+  await app.getByLabel('Not at the moment').check();
   await app.getByRole('button', {name: 'View my full action plan'}).click();
 
   await expect(page.locator('.acorn-hc__report').getByRole('heading', {name: 'Your Healthcheck is complete. Now turn the findings into action.'})).toBeVisible();
