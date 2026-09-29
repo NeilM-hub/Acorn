@@ -88,6 +88,26 @@ test('landing page presents the complete Acorn Safety Healthcheck proposition', 
   await expect(app.getByRole('button', {name: /Start my.*Healthcheck/})).toHaveCount(4);
 });
 
+test('landing page start buttons are visually prominent and respond to hover', async ({page}) => {
+  await page.goto('/health-and-safety-healthcheck/');
+  const app = healthcheck(page);
+
+  const starts = app.getByRole('button', {name: /Start my.*Healthcheck/});
+  await expect(starts).toHaveCount(4);
+
+  const primary = starts.first();
+  const beforeShadow = await primary.evaluate(el => getComputedStyle(el).boxShadow);
+  expect(beforeShadow).not.toBe('none');
+
+  const beforeTransform = await primary.evaluate(el => getComputedStyle(el).transform);
+  await primary.hover();
+  const afterTransform = await primary.evaluate(el => getComputedStyle(el).transform);
+  const afterShadow = await primary.evaluate(el => getComputedStyle(el).boxShadow);
+
+  expect(afterTransform).not.toBe(beforeTransform);
+  expect(afterShadow).not.toBe(beforeShadow);
+});
+
 test('saved landing content and final-section switch reach the rendered page', async ({page}) => {
   wpEnv(
     'eval',
