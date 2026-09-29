@@ -22,7 +22,10 @@ final class CompletionService
             if (trim((string) ($payload[$field] ?? '')) === '') throw new RuntimeException("Missing $field");
         }
         if (!is_email($payload['email'])) throw new RuntimeException('Invalid work email.');
-        $audit = filter_var($payload['audit_requested'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        if (!array_key_exists('audit_requested', $payload)) {
+            throw new RuntimeException('Choose whether you would like Acorn Safety Services to contact you.');
+        }
+        $audit = filter_var($payload['audit_requested'], FILTER_VALIDATE_BOOLEAN);
         if ($audit && (empty($payload['telephone']) || empty($payload['postcode']))) throw new RuntimeException('Telephone and postcode are required when an audit is requested.');
 
         $contactId = (new ContactRepository())->create([
@@ -54,8 +57,8 @@ final class CompletionService
             $wpdb->update(Schema::table('assessments'), ['pdf_status' => 'failed', 'pdf_last_error' => $error->getMessage()], ['id' => $assessment['id']]);
         }
         try { if (!(new CustomerMailer())->send((int) $assessment['id'], $reportUrl, $attachment)) $emailErrors['customer'] = 'wp_mail returned false'; } catch (Throwable $error) { $emailErrors['customer'] = $error->getMessage(); }
-        try { if (!(new InternalMailer())->send((int) $assessment['id'])) $emailErrors['internal'] = 'wp_mail returned false'; } catch (Throwable $error) { $emailErrors['internal'] = $error->getMessage(); }
-        if ($attachment && is_file($attachment)) unlink($attachment);
+        try { if (!(new InternalMailer())->send((int) $assessment['id'], $attachment)) $emailErrors['internal'] = 'wp_mail returned false'; } catch (Throwable $error) { $emailErrors['internal'] = $error->getMessage(); }
+        (new PdfGenerator())->cleanup($attachment);
         $emailStatus = !$emailErrors ? 'sent' : ((isset($emailErrors['customer']) && isset($emailErrors['internal'])) ? 'failed' : 'partial');
         $wpdb->update(Schema::table('assessments'), ['email_status' => $emailStatus, 'email_last_error' => $emailErrors ? wp_json_encode($emailErrors) : null], ['id' => $assessment['id']]);
         do_action('acorn_healthcheck_completed', (int) $assessment['id']);

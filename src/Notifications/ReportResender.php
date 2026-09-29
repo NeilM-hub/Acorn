@@ -27,9 +27,7 @@ final class ReportResender
 
             return (new CustomerMailer())->send($assessmentId, $reportUrl, $attachment);
         } finally {
-            if ($attachment && is_file($attachment)) {
-                unlink($attachment);
-            }
+            (new PdfGenerator())->cleanup($attachment);
         }
     }
 

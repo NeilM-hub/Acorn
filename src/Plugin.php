@@ -9,10 +9,14 @@ final class Plugin
     public function boot(): void
     {
         \Acorn\SafetyHealthcheck\Content\ConciseContentUpgrade::installIfNeeded();
+        \Acorn\SafetyHealthcheck\Content\SimplifiedContentUpgrade::installIfNeeded();
+        \Acorn\SafetyHealthcheck\Content\ChecklistCoverageUpgrade::installIfNeeded();
+        \Acorn\SafetyHealthcheck\Content\ConsultantFeedbackUpgrade::installIfNeeded();
         add_action('admin_enqueue_scripts', [$this, 'adminAssets']);
         add_action('admin_menu', [new \Acorn\SafetyHealthcheck\Admin\Menu(), 'register']);
         add_action('admin_post_acorn_hc_pdf', [new \Acorn\SafetyHealthcheck\Admin\AssessmentsPage(), 'downloadPdf']);
         add_action('admin_post_acorn_hc_resend', [new \Acorn\SafetyHealthcheck\Admin\AssessmentsPage(), 'resend']);
+        add_action('admin_post_acorn_hc_delete_assessments', [new \Acorn\SafetyHealthcheck\Admin\AssessmentsPage(), 'deleteAssessments']);
         add_shortcode('acorn_safety_healthcheck', [$this, 'shortcode']);
         add_action('wp_enqueue_scripts', [$this, 'assets']);
         add_action('rest_api_init', [new \Acorn\SafetyHealthcheck\Rest\AssessmentController(), 'register']);
@@ -33,10 +37,44 @@ final class Plugin
                 ACORN_HC_VERSION
             );
         }
+
+        if (str_contains($hook, 'acorn-healthcheck-settings')) {
+            wp_enqueue_media();
+            wp_enqueue_script(
+                'acorn-healthcheck-admin-settings',
+                plugins_url('assets/js/admin-settings.js', ACORN_HC_FILE),
+                [],
+                ACORN_HC_VERSION,
+                true
+            );
+        }
     }
 
     public function shortcode(): string
     {
+        $landingDefaults = require ACORN_HC_DIR . 'config/landing-page-defaults.php';
+        $savedLanding = get_option('acorn_hc_landing_content', []);
+        $landingContent = array_merge(
+            $landingDefaults,
+            is_array($savedLanding) ? $savedLanding : []
+        );
+
+        $settingsDefaults = require ACORN_HC_DIR . 'config/settings-defaults.php';
+        $savedSettings = get_option('acorn_hc_settings', []);
+        $healthcheckSettings = array_merge(
+            $settingsDefaults,
+            is_array($savedSettings) ? $savedSettings : []
+        );
+
+        $landingLogoUrl = (string) $healthcheckSettings['report_logo_url'];
+        $landingLogoId = (int) ($healthcheckSettings['report_logo_attachment_id'] ?? 0);
+        if ($landingLogoId) {
+            $attachmentLogoUrl = wp_get_attachment_image_url($landingLogoId, 'full');
+            if ($attachmentLogoUrl) {
+                $landingLogoUrl = (string) $attachmentLogoUrl;
+            }
+        }
+
         ob_start();
         require ACORN_HC_DIR . 'templates/shortcode-shell.php';
 

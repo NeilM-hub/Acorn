@@ -23,25 +23,63 @@ export async function answerCurrentQuestion(
   await questionAnswer(page, label).check();
 
   await expect
-    .poll(async () => (await app.getByRole('heading', {level: 2}).textContent().catch(() => '')) ?? '')
+    .poll(async () => (await app.getByRole('heading', {level: 2}).textContent().catch(() => '')) ?? '', {timeout: 5000})
     .not.toBe(previousHeading ?? '');
 }
 
-export async function completeProfile(page: Page): Promise<void> {
+export async function completeProfile(page: Page, employeeLabel = '1–4'): Promise<void> {
   const app = healthcheck(page);
 
   await app.getByLabel('England').check();
-  await app.getByLabel('1–4').check();
-  await app.getByLabel('Organisation type / sector').selectOption('office_professional');
-  await app.getByLabel('Office', {exact: true}).check();
-  await app.getByRole('group', {name: 'Responsibility for premises'}).getByLabel('Yes', {exact: true}).check();
-  await app.getByRole('group', {name: 'Shared premises'}).getByLabel('Yes', {exact: true}).check();
-  await app.getByLabel('Display screen equipment').check();
-  await app.getByRole('group', {name: 'Responsibility for hot/cold water systems'}).getByLabel('No', {exact: true}).check();
-  await app.getByRole('group', {name: 'Responsibility for maintenance or repair'}).getByLabel('No', {exact: true}).check();
-  await app.getByLabel('Not relevant', {exact: true}).check();
-  await app.getByRole('group', {name: 'Is intrusive work planned?'}).getByLabel('No', {exact: true}).check();
-  await app.getByRole('button', {name: 'Continue to questions'}).click();
+  await app.getByLabel(employeeLabel, {exact: true}).check();
+  await app.getByRole('button', {name: 'Start the questions'}).click();
 
   await waitForQuestion(page);
+}
+
+export async function completeTailoring(page: Page, employeeLabel = '1–4'): Promise<void> {
+  await completeProfile(page, employeeLabel);
+}
+
+export async function progressToResults(
+  page: Page,
+  answer: 'Yes' | 'Partly' | 'No' | 'Not sure' = 'Yes',
+): Promise<void> {
+  const app = healthcheck(page);
+
+  for (let i = 0; i < 40; i++) {
+    if (await app.getByRole('heading', {name: "Here's where things stand"}).isVisible().catch(() => false)) {
+      return;
+    }
+
+    const gate = app.locator('form[data-form="gate"]');
+    if (await gate.isVisible().catch(() => false)) {
+      const heading = await app.getByRole('heading', {level: 2}).textContent();
+      await gate.getByLabel('No', {exact: true}).check();
+      await expect
+        .poll(async () => (await app.getByRole('heading', {level: 2}).textContent().catch(() => '')) ?? '', {timeout: 5000})
+        .not.toBe(heading ?? '');
+      continue;
+    }
+
+    const risks = app.locator('form[data-form="risks"]');
+    if (await risks.isVisible().catch(() => false)) {
+      const heading = await app.getByRole('heading', {level: 2}).textContent();
+      await risks.getByLabel('None of these', {exact: true}).check();
+      await risks.getByRole('button', {name: 'Continue'}).click();
+      await expect
+        .poll(async () => (await app.getByRole('heading', {level: 2}).textContent().catch(() => '')) ?? '', {timeout: 5000})
+        .not.toBe(heading ?? '');
+      continue;
+    }
+
+    if (await app.getByRole('group', {name: 'Choose an answer'}).isVisible().catch(() => false)) {
+      await answerCurrentQuestion(page, answer);
+      continue;
+    }
+
+    await page.waitForTimeout(100);
+  }
+
+  throw new Error('Healthcheck did not reach results within the expected number of steps.');
 }
