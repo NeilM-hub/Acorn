@@ -3,6 +3,7 @@
 declare(strict_types=1);
 namespace Acorn\SafetyHealthcheck\Privacy;
 
+use Acorn\SafetyHealthcheck\Assessment\AssessmentDeletionService;
 use Acorn\SafetyHealthcheck\Database\Schema;
 
 final class Retention
@@ -17,19 +18,11 @@ final class Retention
             'SELECT id FROM ' . Schema::table('assessments') . ' WHERE status IN (%s,%s) AND last_activity_at<%s',
             'in_progress', 'assessed', $incompleteCutoff
         ));
-        foreach ($incompleteIds as $id) $this->deleteAssessment((int) $id);
+        $deletion = new AssessmentDeletionService();
+        foreach ($incompleteIds as $id) $deletion->delete((int) $id);
         $completedIds = $wpdb->get_col($wpdb->prepare(
             'SELECT id FROM ' . Schema::table('assessments') . ' WHERE status=%s AND completed_at<%s', 'completed', $completedCutoff
         ));
-        foreach ($completedIds as $id) $this->deleteAssessment((int) $id);
-    }
-
-    private function deleteAssessment(int $id): void
-    {
-        global $wpdb;
-        $contactId = (int) $wpdb->get_var($wpdb->prepare('SELECT contact_id FROM ' . Schema::table('assessments') . ' WHERE id=%d', $id));
-        $wpdb->delete(Schema::table('answers'), ['assessment_id' => $id]);
-        $wpdb->delete(Schema::table('assessments'), ['id' => $id]);
-        if ($contactId) $wpdb->delete(Schema::table('contacts'), ['id' => $contactId]);
+        foreach ($completedIds as $id) $deletion->delete((int) $id);
     }
 }
