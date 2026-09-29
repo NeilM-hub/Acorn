@@ -250,6 +250,7 @@ test('secure report opens with an authority-led action hero', async ({page}) => 
   await app.getByLabel('Last name').fill('Tester');
   await app.getByLabel('Company').fill('Authority Test Ltd');
   await app.getByLabel('Work email').fill('authority@example.test');
+  await app.getByLabel('Not at the moment').check();
   await app.getByRole('button', {name: 'View my full action plan'}).click();
 
   const report = page.locator('.acorn-hc__report');
