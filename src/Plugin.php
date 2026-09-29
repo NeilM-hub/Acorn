@@ -16,6 +16,7 @@ final class Plugin
         add_action('admin_menu', [new \Acorn\SafetyHealthcheck\Admin\Menu(), 'register']);
         add_action('admin_post_acorn_hc_pdf', [new \Acorn\SafetyHealthcheck\Admin\AssessmentsPage(), 'downloadPdf']);
         add_action('admin_post_acorn_hc_resend', [new \Acorn\SafetyHealthcheck\Admin\AssessmentsPage(), 'resend']);
+        add_action('admin_post_acorn_hc_delete_assessments', [new \Acorn\SafetyHealthcheck\Admin\AssessmentsPage(), 'deleteAssessments']);
         add_shortcode('acorn_safety_healthcheck', [$this, 'shortcode']);
         add_action('wp_enqueue_scripts', [$this, 'assets']);
         add_action('rest_api_init', [new \Acorn\SafetyHealthcheck\Rest\AssessmentController(), 'register']);
