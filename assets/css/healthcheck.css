@@ -1977,3 +1977,78 @@
     font-size:.84rem;
   }
 }
+
+
+/* v1.2.6 clearer landing-page primary CTA treatment */
+.acorn-hc__landing .acorn-hc__primary{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.7rem;
+  min-height:3.35rem;
+  padding:1rem 1.55rem;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:12px;
+  background:#084e87;
+  color:#fff;
+  box-shadow:0 10px 24px rgba(8,78,135,.24);
+  font-size:1.07rem;
+  font-weight:800;
+  line-height:1.2;
+  text-align:center;
+  transition:transform .18s ease, box-shadow .18s ease, background-color .18s ease, border-color .18s ease;
+}
+.acorn-hc__landing .acorn-hc__primary::after{
+  content:"→";
+  display:inline-block;
+  font-size:1.15em;
+  line-height:1;
+  transition:transform .18s ease;
+}
+.acorn-hc__landing .acorn-hc__primary:hover,
+.acorn-hc__landing .acorn-hc__primary:focus-visible{
+  transform:translateY(-2px);
+  background:#0a5b9d;
+  box-shadow:0 15px 30px rgba(8,78,135,.32);
+}
+.acorn-hc__landing .acorn-hc__primary:hover::after,
+.acorn-hc__landing .acorn-hc__primary:focus-visible::after{
+  transform:translateX(3px);
+}
+.acorn-hc__landing .acorn-hc__primary:active{
+  transform:translateY(0);
+  box-shadow:0 7px 16px rgba(8,78,135,.22);
+}
+.acorn-hc__landing-primary{
+  min-width:16.5rem;
+  border-color:rgba(255,255,255,.45) !important;
+  background:#fff !important;
+  color:#084e87 !important;
+  box-shadow:0 12px 28px rgba(0,0,0,.18) !important;
+}
+.acorn-hc__landing-primary:hover,
+.acorn-hc__landing-primary:focus-visible{
+  background:#f7fbfe !important;
+  box-shadow:0 17px 34px rgba(0,0,0,.24) !important;
+}
+.acorn-hc__landing-center-cta .acorn-hc__primary,
+.acorn-hc__landing-support-actions .acorn-hc__primary,
+.acorn-hc__landing-final .acorn-hc__primary{
+  min-width:16.5rem;
+}
+
+@media(max-width:48rem){
+  .acorn-hc__landing .acorn-hc__primary{
+    width:100%;
+    min-width:0;
+    min-height:3.45rem;
+    padding:1rem 1.2rem;
+  }
+}
+
+@media(hover:none){
+  .acorn-hc__landing .acorn-hc__primary:hover{
+    transform:none;
+  }
+}
